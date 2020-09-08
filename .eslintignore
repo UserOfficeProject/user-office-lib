@@ -10,3 +10,4 @@ coverage/*
 /src/types/
 
 node_modules
+*.js

@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2019",
     "module": "commonjs",
     "declaration": true,
     "strict": true,
-    "lib": ["dom", "dom.iterable", "ESNext"]
+    "lib": ["dom", "dom.iterable", "ES2019"]
   },
   "exclude": ["node_modules", "**/__tests__/*"]
 }
