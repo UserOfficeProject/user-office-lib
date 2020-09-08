@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "@esss-swap/logger": ["logger/src"]
+    }
+  },
+  "exclude": ["node_modules", "**/__tests__/*"]
+}

@@ -1,0 +1,11 @@
+node_modules
+index.js
+build
+coverage
+.DS_Store
+downloads
+uploads
+lib
+
+.vscode/launch.json
+.vscode/settings.json

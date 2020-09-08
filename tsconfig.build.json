@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "declaration": true,
+    "strict": true,
+    "lib": ["dom", "dom.iterable", "ESNext"]
+  },
+  "exclude": ["node_modules", "**/__tests__/*"]
+}
