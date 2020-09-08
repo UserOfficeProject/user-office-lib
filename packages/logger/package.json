@@ -20,5 +20,12 @@
   "dependencies": {
     "fast-safe-stringify": "^2.0.7",
     "gelf-pro": "^1.3.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/UserOfficeProject/user-office-lib.git"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -35,5 +35,9 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/UserOfficeProject/user-office-lib.git"
   }
 }
