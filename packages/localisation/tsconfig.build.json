@@ -1,7 +1,9 @@
 {
   "extends": "../../tsconfig.build.json",
   "compilerOptions": {
-    "outDir": "./lib"
+    "target": "ES5",
+    "outDir": "./lib",
+    "lib": ["dom", "dom.iterable", "ES2015"]
   },
   "include": ["src/**/*"]
 }
