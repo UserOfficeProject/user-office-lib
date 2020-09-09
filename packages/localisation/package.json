@@ -4,6 +4,8 @@
   "description": "Contains resources for localising UO project NB. Currently only British English is supported",
   "main": "lib/StringResources.js",
   "types": "lib/StringResources.d.ts",
+  "author": "SWAP",
+  "license": "ISC",
   "scripts": {
     "test": "jest --config jestconfig.json",
     "clean": "rm -rf ./lib",
