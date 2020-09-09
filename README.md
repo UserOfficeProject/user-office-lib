@@ -46,7 +46,7 @@ $ lerna add <package> packages/__PACKAGE_NAME__
 
 ## Publishing new version
 
-Before publishing new version it's recommended to run `npm run lerna:prePublish` in order to update package-lock.json with the new version number.
+Before publishing new version it's recommended to run `npm run lerna:prePublish` in order to update package-lock.json with the new version number. \
 By default in case of a new push to the `master` branch a Github action will be triggered, which will check if there are any updated packages - updated means it has a version number which does not exist in NPM registry. If there are it will publish the new packages. \
 Every package should have a `build` command which compiles TS to JS using a proper tsconfig.
 
