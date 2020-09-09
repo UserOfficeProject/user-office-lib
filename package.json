@@ -9,6 +9,7 @@
     "lerna:clean": "lerna clean --yes",
     "lerna:publish": "lerna publish from-package --yes",
     "lerna:test": "lerna run test",
+    "lerna:prePublish": "npm run clean && npm run lerna:bootstrap && npm run lerna:build",
     "clean": "lerna clean --yes && lerna run clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
