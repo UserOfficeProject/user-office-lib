@@ -3,8 +3,8 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
-      "@esss-swap/logger": ["logger/src"]
+      "@esss-swap/duo-logger": ["logger/src"],
+      "@esss-swap/duo-localisation": ["localisation/src"]
     }
-  },
-  "exclude": ["node_modules", "**/__tests__/*"]
+  }
 }

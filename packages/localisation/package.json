@@ -1,0 +1,36 @@
+{
+  "name": "@esss-swap/duo-localisation",
+  "version": "1.1.10",
+  "description": "Contains resources for localising UO project NB. Currently only British English is supported",
+  "main": "lib/StringResources.js",
+  "types": "lib/StringResources.d.ts",
+  "scripts": {
+    "test": "jest --config jestconfig.json",
+    "clean": "rm -rf ./lib",
+    "build": "npm run clean && tsc -p ./tsconfig.build.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/UserOfficeProject/user-office-lib.git"
+  },
+  "keywords": [
+    "duo",
+    "swap",
+    "user-office",
+    "localisation"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.3.0"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ]
+}
