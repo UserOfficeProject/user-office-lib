@@ -44,5 +44,6 @@ export class EnDictionary {
     this.map.put('ACCEPTED', 'Accepted');
     this.map.put('REJECTED', 'Rejected');
     this.map.put('RESERVED', 'Reserved');
+    this.map.put('UPDATED', 'Updated');
   }
 }
