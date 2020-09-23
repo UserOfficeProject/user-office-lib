@@ -91,6 +91,7 @@ export type ResourceId =
   | 'PARTIALLY_FEASIBLE'
   | 'FEASIBLE'
   | 'NOT_FOUND'
+  | 'UPDATED'
   | 'ACCEPTED'
   | 'REJECTED'
   | 'RESERVED';
