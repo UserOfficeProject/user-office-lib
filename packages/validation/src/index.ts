@@ -7,3 +7,4 @@ export * from './SEP';
 export * from './Template';
 export * from './User';
 export * from './Instrument';
+export * from './ScheduledEvent';

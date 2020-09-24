@@ -4,7 +4,8 @@
     "module": "commonjs",
     "declaration": true,
     "strict": true,
-    "lib": ["ES2019"]
+    "lib": ["ES2019"],
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "**/__tests__/*", "**/*.spec.ts"]
 }

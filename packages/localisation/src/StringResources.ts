@@ -94,7 +94,8 @@ export type ResourceId =
   | 'UPDATED'
   | 'ACCEPTED'
   | 'REJECTED'
-  | 'RESERVED';
+  | 'RESERVED'
+  | 'SCHEDULED_EVENT_OVERLAP';
 
 const dictionary = new EnDictionary();
 

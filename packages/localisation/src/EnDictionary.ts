@@ -45,5 +45,11 @@ export class EnDictionary {
     this.map.put('REJECTED', 'Rejected');
     this.map.put('RESERVED', 'Reserved');
     this.map.put('UPDATED', 'Updated');
+
+    // Scheduler
+    this.map.put(
+      'SCHEDULED_EVENT_OVERLAP',
+      'There is already a scheduled event in the selected range'
+    );
   }
 }
