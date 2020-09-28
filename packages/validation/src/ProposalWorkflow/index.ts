@@ -27,8 +27,12 @@ export const addProposalWorkflowStatusValidationSchema = Yup.object().shape({
   proposalWorkflowId: Yup.number().required(),
   sortOrder: Yup.number().required(),
   proposalStatusId: Yup.number().required(),
-  nextProposalStatusId: Yup.number().notRequired(),
-  prevProposalStatusId: Yup.number().notRequired(),
+  nextProposalStatusId: Yup.number()
+    .nullable()
+    .notRequired(),
+  prevProposalStatusId: Yup.number()
+    .nullable()
+    .notRequired(),
   nextStatusEventType: Yup.string().required(),
 });
 
