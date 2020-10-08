@@ -1,0 +1,31 @@
+{
+  "name": "@esss-swap/duo-message-broker",
+  "version": "1.0.0",
+  "description": "",
+  "author": "SWAP",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "clean": "rm -rf ./lib",
+    "build": "npm run clean && tsc -p ./tsconfig.build.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/UserOfficeProject/user-office-lib.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@esss-swap/duo-logger": "^1.0.3",
+    "@types/amqplib": "^0.5.13",
+    "amqplib": "^0.6.0"
+  }
+}
