@@ -1,6 +1,12 @@
 import { logger } from '@esss-swap/duo-logger';
 import amqp, { Connection, Channel, MessageProperties } from 'amqplib';
 
+type BufferedMessage = {
+  queue: Queue;
+  type: string;
+  msg: string;
+};
+
 export enum Queue {
   PROPOSAL = 'PROPOSAL',
 }
@@ -13,15 +19,16 @@ export type ConsumerCallback = (
 
 export interface MessageBroker {
   sendMessage(queue: Queue, type: string, message: string): Promise<void>;
-  listenOn(queue: Queue, cb: ConsumerCallback): Promise<void>;
+  listenOn(queue: Queue, cb: ConsumerCallback): void;
 }
 
 export class RabbitMQMessageBroker implements MessageBroker {
   private consumers: Array<[Queue, ConsumerCallback]> = [];
   private conn: Connection | null = null;
   private ch: Channel | null = null;
+  private messageBuffer: BufferedMessage[] = [];
 
-  async listenOn(queue: Queue, cb: ConsumerCallback) {
+  listenOn(queue: Queue, cb: ConsumerCallback) {
     this.consumers.push([queue, cb]);
 
     if (this.ch) {
@@ -30,9 +37,10 @@ export class RabbitMQMessageBroker implements MessageBroker {
   }
 
   async sendMessage(queue: Queue, type: string, msg: string) {
-    // TODO: queue up message and retry later
     if (!this.ch) {
       logger.logWarn('Channel is not available', { queue, type, msg });
+
+      this.messageBuffer.push({ queue, type, msg });
 
       return;
     }
@@ -45,12 +53,17 @@ export class RabbitMQMessageBroker implements MessageBroker {
         type: type,
       });
 
-      // TODO: handle false result (queue up messages and listen for `drain` event)
+      // queue up messages and listen for `drain` event
       if (!writeable) {
-        throw new Error('not writeable, not implemented yet');
+        this.messageBuffer.push({ queue, type, msg });
       }
     } catch (err) {
-      logger.logError('sending message failed at some point', err);
+      logger.logError('sending message failed at some point', {
+        err,
+        queue,
+        type,
+        msg,
+      });
     }
   }
 
@@ -121,6 +134,10 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
     logger.logInfo('RabbitMQMessageBroker: Channel created', {});
 
+    this.ch.on('drain', () => {
+      this.flushMessages();
+    });
+
     this.ch.on('error', err => {
       logger.logError('RabbitMQMessageBroker: Channel error', err);
     });
@@ -131,6 +148,9 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
       this.scheduleChannelCreation();
     });
+
+    // after (re)creating a channel try to flush every buffered messages
+    this.flushMessages();
   }
 
   private scheduleChannelCreation() {
@@ -177,6 +197,8 @@ export class RabbitMQMessageBroker implements MessageBroker {
                 'RabbitMQMessageBroker: Failed to parse the message content',
                 { content: stringifiedContent }
               );
+
+              this.ch?.nack(msg, false, false);
 
               return;
             }
@@ -245,6 +267,24 @@ export class RabbitMQMessageBroker implements MessageBroker {
     await this.ch.assertQueue(queue, {
       deadLetterExchange: deadLetterExchange,
       durable: true,
+    });
+  }
+
+  private flushMessages() {
+    if (this.messageBuffer.length === 0) {
+      return;
+    }
+
+    logger.logInfo(
+      `RabbitMQMessageBroker: flushMessage triggered, buffered messages: ${this.messageBuffer.length}`,
+      {}
+    );
+
+    const messageBuffer = this.messageBuffer;
+    this.messageBuffer = [];
+
+    messageBuffer.forEach(({ queue, type, msg }) => {
+      this.sendMessage(queue, type, msg);
     });
   }
 }
