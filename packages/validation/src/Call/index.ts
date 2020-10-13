@@ -12,6 +12,9 @@ export const createCallValidationSchema = Yup.object().shape({
   surveyComment: Yup.string().required('Survey comment is required'),
   startCycle: Yup.date().required('Start cycle date is required'),
   endCycle: Yup.date().required('End cycle date is required'),
+  proposalWorkflowId: Yup.number()
+    .nullable()
+    .notRequired(),
   templateId: Yup.number()
     .nullable()
     .notRequired(),
@@ -30,6 +33,9 @@ export const updateCallValidationSchema = Yup.object().shape({
   surveyComment: Yup.string().required('Survey comment is required'),
   startCycle: Yup.date().required('Start cycle date is required'),
   endCycle: Yup.date().required('End cycle date is required'),
+  proposalWorkflowId: Yup.number()
+    .nullable()
+    .notRequired(),
   templateId: Yup.number()
     .nullable()
     .notRequired(),
