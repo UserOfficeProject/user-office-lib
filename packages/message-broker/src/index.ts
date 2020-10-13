@@ -1,6 +1,12 @@
 import { logger } from '@esss-swap/duo-logger';
 import amqp, { Connection, Channel, MessageProperties } from 'amqplib';
 
+type Message = {
+  queue: Queue;
+  type: string;
+  msg: string;
+};
+
 export enum Queue {
   PROPOSAL = 'PROPOSAL',
 }
@@ -13,44 +19,51 @@ export type ConsumerCallback = (
 
 export interface MessageBroker {
   sendMessage(queue: Queue, type: string, message: string): Promise<void>;
-  listenOn(queue: Queue, cb: ConsumerCallback): Promise<void>;
+  listenOn(queue: Queue, cb: ConsumerCallback): void;
 }
 
 export class RabbitMQMessageBroker implements MessageBroker {
   private consumers: Array<[Queue, ConsumerCallback]> = [];
-  private conn: Connection | null = null;
-  private ch: Channel | null = null;
+  private connection: Connection | null = null;
+  private channel: Channel | null = null;
+  private messageBuffer: Message[] = [];
 
-  async listenOn(queue: Queue, cb: ConsumerCallback) {
+  listenOn(queue: Queue, cb: ConsumerCallback) {
     this.consumers.push([queue, cb]);
 
-    if (this.ch) {
+    if (this.channel) {
       this.registerConsumers();
     }
   }
 
   async sendMessage(queue: Queue, type: string, msg: string) {
-    // TODO: queue up message and retry later
-    if (!this.ch) {
+    if (!this.channel) {
       logger.logWarn('Channel is not available', { queue, type, msg });
+
+      this.messageBuffer.push({ queue, type, msg });
 
       return;
     }
 
     try {
       await this.assertQueue(queue);
-      const writeable = this.ch.sendToQueue(queue, Buffer.from(msg), {
+      const writeable = this.channel.sendToQueue(queue, Buffer.from(msg), {
         persistent: true,
         timestamp: Date.now(),
         type: type,
       });
 
-      // TODO: handle false result (queue up messages and listen for `drain` event)
+      // queue up messages and listen for `drain` event
       if (!writeable) {
-        throw new Error('not writeable, not implemented yet');
+        this.messageBuffer.push({ queue, type, msg });
       }
     } catch (err) {
-      logger.logError('sending message failed at some point', err);
+      logger.logError('sending message failed at some point', {
+        err,
+        queue,
+        type,
+        msg,
+      });
     }
   }
 
@@ -59,18 +72,18 @@ export class RabbitMQMessageBroker implements MessageBroker {
       logger.logInfo('RabbitMQMessageBroker: Connecting...', {});
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.conn = await amqp.connect(process.env.RABBITMQ_URL!);
+      this.connection = await amqp.connect(process.env.RABBITMQ_URL!);
 
       logger.logInfo('RabbitMQMessageBroker: Connected', {});
 
-      this.conn.on('error', err => {
+      this.connection.on('error', err => {
         logger.logError('RabbitMQMessageBroker: Connection error', err);
       });
 
-      this.conn.on('close', () => {
+      this.connection.on('close', () => {
         logger.logWarn('RabbitMQMessageBroker: Connection closed', {});
-        this.conn = null;
-        this.ch = null;
+        this.connection = null;
+        this.channel = null;
 
         this.scheduleReconnect();
       });
@@ -85,8 +98,8 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
       // if we already have a connection but failed to register channel
       // close the channel and restart the process
-      if (this.conn) {
-        await this.conn
+      if (this.connection) {
+        await this.connection
           .close()
           .catch(e =>
             logger.logError(
@@ -94,7 +107,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
               e
             )
           );
-        this.conn = null;
+        this.connection = null;
       }
 
       this.scheduleReconnect();
@@ -111,26 +124,33 @@ export class RabbitMQMessageBroker implements MessageBroker {
   }
 
   private async registerChannel() {
-    if (!this.conn || this.ch) {
+    if (!this.connection || this.channel) {
       return;
     }
 
     logger.logInfo('RabbitMQMessageBroker: Creating channel...', {});
 
-    this.ch = await this.conn.createChannel();
+    this.channel = await this.connection.createChannel();
 
     logger.logInfo('RabbitMQMessageBroker: Channel created', {});
 
-    this.ch.on('error', err => {
+    this.channel.on('drain', () => {
+      this.flushMessages();
+    });
+
+    this.channel.on('error', err => {
       logger.logError('RabbitMQMessageBroker: Channel error', err);
     });
 
-    this.ch.on('close', () => {
+    this.channel.on('close', () => {
       logger.logWarn('RabbitMQMessageBroker: Channel closed', {});
-      this.ch = null;
+      this.channel = null;
 
       this.scheduleChannelCreation();
     });
+
+    // after (re)creating a channel try to flush every buffered messages
+    this.flushMessages();
   }
 
   private scheduleChannelCreation() {
@@ -143,7 +163,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
   }
 
   private async registerConsumers() {
-    if (!this.ch) {
+    if (!this.channel) {
       return;
     }
 
@@ -159,7 +179,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
       for (const [queue, cb] of consumers) {
         await this.assertQueue(queue);
 
-        await this.ch.consume(
+        await this.channel.consume(
           queue,
           msg => {
             // is this even possible???
@@ -177,6 +197,8 @@ export class RabbitMQMessageBroker implements MessageBroker {
                 'RabbitMQMessageBroker: Failed to parse the message content',
                 { content: stringifiedContent }
               );
+
+              this.channel?.nack(msg, false, false);
 
               return;
             }
@@ -200,7 +222,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
                  * event processing in the listener
                  *
                  */
-                this.ch?.ack(msg);
+                this.channel?.ack(msg);
               })
               .catch(err => {
                 logger.logError(
@@ -213,7 +235,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
                  *
                  * NOTE: not acknowledged events go to a dead letter queue
                  */
-                this.ch?.nack(msg, false, false);
+                this.channel?.nack(msg, false, false);
               });
           },
           { noAck: false }
@@ -230,21 +252,39 @@ export class RabbitMQMessageBroker implements MessageBroker {
   }
 
   private async assertQueue(queue: Queue) {
-    if (!this.ch) {
+    if (!this.channel) {
       return;
     }
 
     const deadLetterQueue = `DL__${queue}`;
     const deadLetterExchange = `DLX__${queue}`;
 
-    await this.ch.assertExchange(deadLetterExchange, 'fanout', {
+    await this.channel.assertExchange(deadLetterExchange, 'fanout', {
       durable: true,
     });
-    await this.ch.assertQueue(deadLetterQueue, { durable: true });
-    await this.ch.bindQueue(deadLetterQueue, deadLetterExchange, '');
-    await this.ch.assertQueue(queue, {
+    await this.channel.assertQueue(deadLetterQueue, { durable: true });
+    await this.channel.bindQueue(deadLetterQueue, deadLetterExchange, '');
+    await this.channel.assertQueue(queue, {
       deadLetterExchange: deadLetterExchange,
       durable: true,
+    });
+  }
+
+  private flushMessages() {
+    if (this.messageBuffer.length === 0) {
+      return;
+    }
+
+    logger.logInfo(
+      `RabbitMQMessageBroker: flushMessage triggered, buffered messages: ${this.messageBuffer.length}`,
+      {}
+    );
+
+    const messageBuffer = this.messageBuffer;
+    this.messageBuffer = [];
+
+    messageBuffer.forEach(({ queue, type, msg }) => {
+      this.sendMessage(queue, type, msg);
     });
   }
 }
