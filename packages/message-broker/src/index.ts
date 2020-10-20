@@ -1,5 +1,5 @@
 import { logger } from '@esss-swap/duo-logger';
-import amqp, { Connection, Channel, MessageProperties } from 'amqplib';
+import amqp, { Connection, Channel, MessageProperties, Options } from 'amqplib';
 
 type Message = {
   queue: Queue;
@@ -23,6 +23,9 @@ export interface MessageBroker {
 }
 
 export class RabbitMQMessageBroker implements MessageBroker {
+  private connectionConfig: string | Options.Connect = 'amqp://localhost';
+  private socketOptions: any;
+
   private consumers: Array<[Queue, ConsumerCallback]> = [];
   private connection: Connection | null = null;
   private channel: Channel | null = null;
@@ -67,12 +70,20 @@ export class RabbitMQMessageBroker implements MessageBroker {
     }
   }
 
-  async setup() {
+  async setup(
+    connectionConfig?: string | Options.Connect,
+    socketOptions?: any
+  ) {
+    this.connectionConfig = connectionConfig || this.connectionConfig;
+    this.socketOptions = socketOptions;
+
     try {
       logger.logInfo('RabbitMQMessageBroker: Connecting...', {});
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.connection = await amqp.connect(process.env.RABBITMQ_URL!);
+      this.connection = await amqp.connect(
+        this.connectionConfig,
+        this.socketOptions
+      );
 
       logger.logInfo('RabbitMQMessageBroker: Connected', {});
 
