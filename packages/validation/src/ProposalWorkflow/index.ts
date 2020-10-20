@@ -26,6 +26,10 @@ export const deleteProposalWorkflowValidationSchema = Yup.object().shape({
 export const addProposalWorkflowStatusValidationSchema = Yup.object().shape({
   proposalWorkflowId: Yup.number().required(),
   sortOrder: Yup.number().required(),
+  droppableGroupId: Yup.string().required(),
+  parentDroppableGroupId: Yup.string()
+    .nullable()
+    .notRequired(),
   proposalStatusId: Yup.number().required(),
   nextProposalStatusId: Yup.number()
     .nullable()
@@ -33,7 +37,6 @@ export const addProposalWorkflowStatusValidationSchema = Yup.object().shape({
   prevProposalStatusId: Yup.number()
     .nullable()
     .notRequired(),
-  nextStatusEventType: Yup.string().required(),
 });
 
 export const moveProposalWorkflowStatusValidationSchema = Yup.object().shape({
@@ -45,4 +48,11 @@ export const moveProposalWorkflowStatusValidationSchema = Yup.object().shape({
 export const deleteProposalWorkflowStatusValidationSchema = Yup.object().shape({
   proposalStatusId: Yup.number().required(),
   proposalWorkflowId: Yup.number().required(),
+});
+
+export const addNextStatusEventsValidationSchema = Yup.object().shape({
+  proposalWorkflowConnectionId: Yup.number().required(),
+  nextStatusEvents: Yup.array()
+    .of(Yup.string())
+    .required(),
 });
