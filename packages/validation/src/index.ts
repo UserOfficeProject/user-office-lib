@@ -9,3 +9,8 @@ export * from './Template';
 export * from './User';
 export * from './Instrument';
 export * from './ScheduledEvent';
+export * from './LostTime';
+
+import * as util from './util';
+
+export { util };
