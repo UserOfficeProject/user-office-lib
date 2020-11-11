@@ -6,6 +6,12 @@ export const createCallValidationSchema = Yup.object().shape({
   endCall: Yup.date().required('End call date is required'),
   startReview: Yup.date().required('Start review date is required'),
   endReview: Yup.date().required('End review date is required'),
+  startSEPReview: Yup.date()
+    .nullable()
+    .notRequired(),
+  endSEPReview: Yup.date()
+    .nullable()
+    .notRequired(),
   startNotify: Yup.date().required('Start notify date is required'),
   endNotify: Yup.date().required('End notify date is required'),
   cycleComment: Yup.string().required('Cycle comment is required'),
@@ -27,6 +33,12 @@ export const updateCallValidationSchema = Yup.object().shape({
   endCall: Yup.date().required('End call date is required'),
   startReview: Yup.date().required('Start review date is required'),
   endReview: Yup.date().required('End review date is required'),
+  startSEPReview: Yup.date()
+    .nullable()
+    .notRequired(),
+  endSEPReview: Yup.date()
+    .nullable()
+    .notRequired(),
   startNotify: Yup.date().required('Start notify date is required'),
   endNotify: Yup.date().required('End notify date is required'),
   cycleComment: Yup.string().required('Cycle comment is required'),
