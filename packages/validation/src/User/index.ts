@@ -9,7 +9,7 @@ export const createUserByEmailInviteValidationSchema = (UserRole: any) =>
   Yup.object().shape({
     firstname: Yup.string().required(),
     lastname: Yup.string().required(),
-    email: Yup.string().required(),
+    email: Yup.string().email(),
     userRole: Yup.string()
       .oneOf(Object.keys(UserRole))
       .required(),
@@ -17,13 +17,31 @@ export const createUserByEmailInviteValidationSchema = (UserRole: any) =>
 
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
 
+const passwordValidationSchema = Yup.string()
+  .required(
+    'Password must contain at least 8 characters (including upper case, lower case and numbers)'
+  )
+  .matches(
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/,
+    'Password must contain at least 8 characters (including upper case, lower case and numbers)'
+  );
+
 export const createUserValidationSchema = Yup.object().shape({
+  user_title: Yup.string().required(),
   firstname: Yup.string()
     .required()
     .min(2),
+  middlename: Yup.string().notRequired(),
   lastname: Yup.string()
     .required()
     .min(2),
+  password: passwordValidationSchema,
+  preferredname: Yup.string().notRequired(),
+  orcid: Yup.string().required(),
+  orcidHash: Yup.string().required(),
+  refreshToken: Yup.string().required(),
+  gender: Yup.string().required(),
+  nationality: Yup.number().required(),
   birthdate: Yup.date()
     .min(new Date(1900, 1, 1), 'You are not that old')
     .test('DOB', 'You must be at least 18 years old', value => {
@@ -46,6 +64,10 @@ export const createUserValidationSchema = Yup.object().shape({
       }
     })
     .required('Please specify your birth date'),
+  organisation: Yup.number().required(),
+  department: Yup.string().required(),
+  position: Yup.string().required(),
+  email: Yup.string().email(),
   telephone: Yup.string()
     .min(2, 'telephone must be at least 2 characters')
     .max(30, 'telephone must be at most 20 characters')
@@ -54,19 +76,20 @@ export const createUserValidationSchema = Yup.object().shape({
   telephone_alt: Yup.string()
     .min(2, 'telephone must be at least 2 characters')
     .max(30, 'telephone must be at most 20 characters')
-    .matches(phoneRegExp, 'Phone number is not valid'),
+    .matches(phoneRegExp, 'Phone number is not valid')
+    .notRequired(),
 });
 
 export const updateUserValidationSchema = Yup.object().shape({
   id: Yup.number().required(),
-  user_title: Yup.string().notRequired(),
+  user_title: Yup.string().required(),
   firstname: Yup.string().required(),
   middlename: Yup.string().notRequired(),
   lastname: Yup.string().required(),
   username: Yup.string().notRequired(),
   preferredname: Yup.string().notRequired(),
-  gender: Yup.string().notRequired(),
-  nationality: Yup.number().notRequired(),
+  gender: Yup.string().required(),
+  nationality: Yup.number().required(),
   birthdate: Yup.date()
     .min(new Date(1900, 1, 1), 'You are not that old')
     .test('DOB', 'You must be at least 18 years old', value => {
@@ -88,20 +111,27 @@ export const updateUserValidationSchema = Yup.object().shape({
         return true;
       }
     })
-    .notRequired(),
-  organisation: Yup.number().notRequired(),
-  department: Yup.string().notRequired(),
-  position: Yup.string().notRequired(),
-  email: Yup.string().notRequired(),
+    .required(),
+  organisation: Yup.number().required(),
+  department: Yup.string().required(),
+  position: Yup.string().required(),
+  email: Yup.string()
+    .email()
+    .required(),
   telephone: Yup.string()
     .min(2, 'telephone must be at least 2 characters')
     .max(30, 'telephone must be at most 20 characters')
     .matches(phoneRegExp, 'Phone number is not valid')
-    .notRequired(),
+    .required(),
   telephone_alt: Yup.string()
-    .min(2, 'telephone must be at least 2 characters')
-    .max(30, 'telephone must be at most 20 characters')
-    .matches(phoneRegExp, 'Phone number is not valid'),
+    .test('telephone_alt', 'Provided number is not valid', value => {
+      if (!value) {
+        return true;
+      }
+
+      return phoneRegExp.test(value);
+    })
+    .notRequired(),
   placeholder: Yup.bool().notRequired(),
   roles: Yup.array()
     .of(Yup.number())
@@ -146,26 +176,12 @@ export const updatePasswordValidationSchema = Yup.object().shape({
 });
 
 export const userPasswordFieldBEValidationSchema = Yup.object().shape({
-  password: Yup.string()
-    .required(
-      'Password must contain at least 8 characters (including upper case, lower case and numbers)'
-    )
-    .matches(
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/,
-      'Password must contain at least 8 characters (including upper case, lower case and numbers)'
-    ),
+  password: passwordValidationSchema,
   token: Yup.string().required(),
 });
 
 export const userPasswordFieldValidationSchema = Yup.object().shape({
-  password: Yup.string()
-    .required(
-      'Password must contain at least 8 characters (including upper case, lower case and numbers)'
-    )
-    .matches(
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/,
-      'Password must contain at least 8 characters (including upper case, lower case and numbers)'
-    ),
+  password: passwordValidationSchema,
   confirmPassword: Yup.string()
     .required()
     .label('Confirm password')
