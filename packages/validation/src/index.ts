@@ -9,3 +9,7 @@ export * from './Template';
 export * from './User';
 export * from './Instrument';
 export * from './ScheduledEvent';
+
+import * as util from './util';
+
+export { util };
