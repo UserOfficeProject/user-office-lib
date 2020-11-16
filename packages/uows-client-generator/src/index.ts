@@ -143,5 +143,3 @@ const generateCode = (obj: any): void => {
 
     fs.appendFileSync(filePath, `${makeArgsObjTemplate}\n}`);
 };
-
-createInterface();

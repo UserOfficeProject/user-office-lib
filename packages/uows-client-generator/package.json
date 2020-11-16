@@ -24,6 +24,7 @@
     "access": "public"
   },
   "dependencies": {
+    "fs": "^0.0.1-security",
     "soap": "^0.34.0"
   }
 }
