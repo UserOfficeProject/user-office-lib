@@ -42,5 +42,6 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/UserOfficeProject/user-office-lib.git"
-  }
+  },
+  "version": "1.0.1"
 }
