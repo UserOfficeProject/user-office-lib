@@ -1,6 +1,6 @@
 {
   "name": "@stfc-user-programme/uows_client_generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generates an interface for consumning the User Office Web Service",
   "author": "STFC",
   "license": "ISC",
