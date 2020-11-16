@@ -6,7 +6,8 @@
       "@esss-swap/duo-logger": ["logger/src"],
       "@esss-swap/duo-localisation": ["localisation/src"],
       "@esss-swap/duo-validation": ["validation/src"],
-      "@esss-swap/duo-message-broker": ["message-broker/src"]
+      "@esss-swap/duo-message-broker": ["message-broker/src"],
+	  "@stfc-user-programme/uows_client_generator": ["uows-client-generator/src"]
     }
   }
 }

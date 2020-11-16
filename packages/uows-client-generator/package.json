@@ -1,0 +1,29 @@
+{
+  "name": "@stfc-user-programme/uows_client_generator",
+  "version": "1.0.0",
+  "description": "Generates an interface for consumning the User Office Web Service",
+  "author": "STFC",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "clean": "rm -rf ./lib",
+    "build": "npm run clean && tsc -p ./tsconfig.build.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/UserOfficeProject/user-office-lib.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "soap": "^0.34.0"
+  }
+}
