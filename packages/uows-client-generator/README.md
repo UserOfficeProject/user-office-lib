@@ -7,30 +7,32 @@ details of the SOAP implementation from the user and exposing only the functiona
 
 ## Setup
 
-This project requires [node.js](https://nodejs.org/en/download/), [this soap library](https://www.npmjs.com/package/soap) and [TypeScript](https://www.typescriptlang.org/download)
+This project requires [node.js](https://nodejs.org/en/download/)
 
-Run the following command to enable node.js to work with TypeScript
+To run this tool from anywhere, install it using the following command:
 
-`npm install @types/node --save`
+`npm i -g @stfc-user-programme/uows_client_generator`
 
 ## How to run
 
-You must be connected to STFC's internal network in order to access the UOWS WSDL.
-To use the soap interface offered by this project you must first install the package:
+To run the tool use the following in the command line:
 
-`npm i @stfc-user-programme/uows_client_generator`
+`uows-client-generator <wsdl_url> <output_path>`
 
-Then import it into your script:
+There are default values for both parameters: \
+wsdl_url: 'https://api.facilities.rl.ac.uk/ws/UserOfficeWebService?wsdl' \
+output_path: './src/UOWSSoapInterface.ts' - this will place it in <path-to-package-installation/src/>
 
-`import * as uows_client_generator from "@stfc-user-programme/uows_client_generator";`
+You must be connected to STFC's internal network in order to access the default UOWS WSDL when running the tool. \
+If you wish to specify an output path you must specify the wsdl url as well.
 
-Next, run the createInterface method:
+Running the tool will produce a TypeScript file which you can use to make SOAP calls to the UOWS.
 
-`uows_client_generator.createInterface();`
+This file defines a class containing the SOAP methods. To use it with the default WSDL (available [here](https://api.facilities.rl.ac.uk/ws/UserOfficeWebService?wsdl)), simply import the file to your project:
 
-This will produce the UOWSServiceInterface.ts file which you can use to make SOAP calls to the UOWS.
+`import UOWSSoapClient from "./UOWSSoapInterface";`
 
-This file describes a class containing the SOAP methods. To use it with the default WSDL (available [here](https://api.facilities.rl.ac.uk/ws/UserOfficeWebService?wsdl)), simply import the file and instantiate the class like so:
+Then instantiate the class like so:
 
 `const client = new UOWSSoapClient();`
 
