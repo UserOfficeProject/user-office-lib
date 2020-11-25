@@ -2,8 +2,8 @@ import * as Yup from 'yup';
 
 export const createProposalStatusValidationSchema = Yup.object()
   .shape({
-    name: Yup.string()
-      .max(30)
+    shortCode: Yup.string()
+      .max(50)
       .trim()
       .test(
         'noWhiteSpaces',
@@ -11,6 +11,9 @@ export const createProposalStatusValidationSchema = Yup.object()
         value => !/\s/.test(value as string)
       )
       .uppercase()
+      .required(),
+    name: Yup.string()
+      .max(100)
       .required(),
     description: Yup.string()
       .max(200)
@@ -21,8 +24,8 @@ export const createProposalStatusValidationSchema = Yup.object()
 export const updateProposalStatusValidationSchema = Yup.object()
   .shape({
     id: Yup.number().required(),
-    name: Yup.string()
-      .max(30)
+    shortCode: Yup.string()
+      .max(50)
       .trim()
       .test(
         'noWhiteSpaces',
@@ -30,6 +33,9 @@ export const updateProposalStatusValidationSchema = Yup.object()
         value => !/\s/.test(value as string)
       )
       .uppercase()
+      .required(),
+    name: Yup.string()
+      .max(100)
       .required(),
     description: Yup.string()
       .max(200)
