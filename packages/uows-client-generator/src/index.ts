@@ -4,8 +4,9 @@ import * as fs from 'fs';
 
 import * as soap from 'soap';
 
-let defaultWsdl: string =
+const defaultWsdl: string =
   'https://api.facilities.rl.ac.uk/ws/UserOfficeWebService?wsdl';
+const defaultFilePath: string = './UOWSSoapInterface.ts';
 let wsdlDesc: any;
 
 //Maps XML datatypes to Typescript datatypes
@@ -82,9 +83,11 @@ const makeArgsObjTemplate: string = `   private makeArgsObj(functName: string, .
         }\n\n`;
 
 //A string specifying the constructor for the UOWSSoapInterface class
-const constructorTemplate: string = `   public constructor(wsdlUrl?: string) {
+const constructorTemplate = `   public constructor(wsdlUrl?: string) {
             if(wsdlUrl == null)
-                this.wsdlUrl = '${defaultWsdl}';
+                this.wsdlUrl = '${
+                  process.argv[2] ? process.argv[2] : defaultWsdl
+                }';
             else
                 this.wsdlUrl = wsdlUrl;
         }\n\n`;
@@ -129,13 +132,10 @@ const populateFuncts = (): any => {
 
 //Writes the UOWSSoapInterface.ts file to storage
 const generateCode = (obj: any): void => {
-  let filePath: string;
+  const filePath: string = process.argv[3] ? process.argv[3] : defaultFilePath;
 
-  if (process.argv[3]) filePath = process.argv[3];
-  else filePath = './src/UOWSSoapInterface.ts';
-
-  // eslint-disable-next-line prettier/prettier
-  fs.writeFileSync(filePath, 'import * as soap from \'soap\';\n\n');
+  /*eslint quotes: ["error", "single", { "avoidEscape": true }]*/
+  fs.writeFileSync(filePath, 'import * as soap from "soap";\n\n');
   fs.appendFileSync(filePath, 'export default class UOWSSoapClient {\n\n');
   fs.appendFileSync(filePath, 'private wsdlUrl: string;\n');
   fs.appendFileSync(
@@ -153,10 +153,10 @@ const generateCode = (obj: any): void => {
 
 //Creates the UOWSService.ts file
 const createInterface = (): void => {
-  if (process.argv[2]) defaultWsdl = process.argv[2];
+  const wsdlUrl: string = process.argv[2] ? process.argv[2] : defaultWsdl;
 
   soap
-    .createClientAsync(defaultWsdl)
+    .createClientAsync(wsdlUrl)
     .then((client: soap.Client) => {
       wsdlDesc = client.describe();
 

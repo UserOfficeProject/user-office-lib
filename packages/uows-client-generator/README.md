@@ -13,7 +13,7 @@ To run this tool from anywhere, install it using the following command:
 
 `npm i -g @stfc-user-programme/uows_client_generator`
 
-## How to run
+## How to Run
 
 To run the tool use the following in the command line:
 
@@ -39,3 +39,13 @@ Then instantiate the class like so:
 You can provide a URL or path to a version of the UOWS you wish to use in the constructor:
 
 `const client = new UOWSSoapClient(<WSDL_URL>);`
+
+## How to Run Tests
+
+To run the Jest tests you must first comment out the first line of lib/index.js, like so:
+
+`//#!/usr/bin/env node`
+
+Then run the following command in the root of the package:
+
+`npm run test`
