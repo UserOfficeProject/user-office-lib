@@ -1,36 +1,26 @@
 import * as Yup from 'yup';
 
-export const createCallValidationSchema = Yup.object().shape({
+const firstStepCreateCallValidationSchema = Yup.object().shape({
   shortCode: Yup.string().required('Short Code is required'),
   startCall: Yup.date().required('Start call date is required'),
   endCall: Yup.date().required('End call date is required'),
-  startReview: Yup.date().required('Start review date is required'),
-  endReview: Yup.date().required('End review date is required'),
-  startSEPReview: Yup.date()
-    .nullable()
-    .notRequired(),
-  endSEPReview: Yup.date()
-    .nullable()
-    .notRequired(),
-  startNotify: Yup.date().required('Start notify date is required'),
-  endNotify: Yup.date().required('End notify date is required'),
-  cycleComment: Yup.string().required('Cycle comment is required'),
-  surveyComment: Yup.string().required('Survey comment is required'),
-  startCycle: Yup.date().required('Start cycle date is required'),
-  endCycle: Yup.date().required('End cycle date is required'),
-  proposalWorkflowId: Yup.number()
-    .nullable()
-    .notRequired(),
   templateId: Yup.number()
+    .nullable()
+    .notRequired(),
+  proposalWorkflowId: Yup.number()
     .nullable()
     .notRequired(),
 });
 
-export const updateCallValidationSchema = Yup.object().shape({
-  id: Yup.number().required('Id is required'),
-  shortCode: Yup.string().required('Short Code is required'),
-  startCall: Yup.date().required('Start call date is required'),
-  endCall: Yup.date().required('End call date is required'),
+const firstStepUpdateCallValidationSchema = firstStepCreateCallValidationSchema.concat(
+  Yup.object()
+    .shape({
+      id: Yup.number().required('Id is required'),
+    })
+    .required()
+);
+
+const secondStepCallValidationSchema = Yup.object().shape({
   startReview: Yup.date().required('Start review date is required'),
   endReview: Yup.date().required('End review date is required'),
   startSEPReview: Yup.date()
@@ -39,19 +29,32 @@ export const updateCallValidationSchema = Yup.object().shape({
   endSEPReview: Yup.date()
     .nullable()
     .notRequired(),
+  surveyComment: Yup.string()
+    .max(100, 'Survey comment should be no longer than 100 characters')
+    .required('Survey comment is required'),
+});
+
+const thirdStepCallValidationSchema = Yup.object().shape({
   startNotify: Yup.date().required('Start notify date is required'),
   endNotify: Yup.date().required('End notify date is required'),
-  cycleComment: Yup.string().required('Cycle comment is required'),
-  surveyComment: Yup.string().required('Survey comment is required'),
   startCycle: Yup.date().required('Start cycle date is required'),
   endCycle: Yup.date().required('End cycle date is required'),
-  proposalWorkflowId: Yup.number()
-    .nullable()
-    .notRequired(),
-  templateId: Yup.number()
-    .nullable()
-    .notRequired(),
+  cycleComment: Yup.string()
+    .max(100, 'Survey comment should be no longer than 100 characters')
+    .required('Cycle comment is required'),
 });
+
+export const createCallValidationSchemas = [
+  firstStepCreateCallValidationSchema,
+  secondStepCallValidationSchema,
+  thirdStepCallValidationSchema,
+];
+
+export const updateCallValidationSchemas = [
+  firstStepUpdateCallValidationSchema,
+  secondStepCallValidationSchema,
+  thirdStepCallValidationSchema,
+];
 
 export const assignInstrumentsToCallValidationSchema = Yup.object().shape({
   callId: Yup.number().required('callId is required'),
