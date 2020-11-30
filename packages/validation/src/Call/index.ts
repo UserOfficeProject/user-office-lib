@@ -40,7 +40,7 @@ const thirdStepCallValidationSchema = Yup.object().shape({
   startCycle: Yup.date().required('Start cycle date is required'),
   endCycle: Yup.date().required('End cycle date is required'),
   cycleComment: Yup.string()
-    .max(100, 'Survey comment should be no longer than 100 characters')
+    .max(100, 'Cycle comment should be no longer than 100 characters')
     .required('Cycle comment is required'),
 });
 
