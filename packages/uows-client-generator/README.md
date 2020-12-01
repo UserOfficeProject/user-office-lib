@@ -42,10 +42,6 @@ You can provide a URL or path to a version of the UOWS you wish to use in the co
 
 ## How to Run Tests
 
-To run the Jest tests you must first comment out the first line of lib/index.js, like so:
-
-`//#!/usr/bin/env node`
-
-Then run the following command in the root of the package:
+To run the tests simply execute the following command in the root of the package directory:
 
 `npm run test`
