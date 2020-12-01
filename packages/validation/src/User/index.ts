@@ -27,21 +27,30 @@ const passwordValidationSchema = Yup.string()
   );
 
 export const createUserValidationSchema = Yup.object().shape({
-  user_title: Yup.string().required(),
-  firstname: Yup.string()
-    .required()
-    .min(2),
-  middlename: Yup.string().notRequired(),
-  lastname: Yup.string()
-    .required()
-    .min(2),
-  password: passwordValidationSchema,
-  preferredname: Yup.string().notRequired(),
   orcid: Yup.string().required(),
   orcidHash: Yup.string().required(),
   refreshToken: Yup.string().required(),
+  firstname: Yup.string()
+    .required()
+    .min(2)
+    .max(50),
+  middlename: Yup.string()
+    .notRequired()
+    .max(50),
+  preferredname: Yup.string()
+    .notRequired()
+    .max(50),
+  lastname: Yup.string()
+    .required()
+    .min(2)
+    .max(50),
   gender: Yup.string().required(),
   nationality: Yup.number().required(),
+  user_title: Yup.string().required(),
+  email: Yup.string()
+    .email()
+    .required(),
+  password: passwordValidationSchema,
   birthdate: Yup.date()
     .min(new Date(1900, 1, 1), 'You are not that old')
     .test('DOB', 'You must be at least 18 years old', value => {
@@ -65,31 +74,43 @@ export const createUserValidationSchema = Yup.object().shape({
     })
     .required('Please specify your birth date'),
   organisation: Yup.number().required(),
-  department: Yup.string().required(),
-  position: Yup.string().required(),
-  email: Yup.string().email(),
+  department: Yup.string()
+    .min(2)
+    .max(50)
+    .required(),
+  position: Yup.string()
+    .min(2)
+    .max(50)
+    .required(),
   telephone: Yup.string()
-    .min(2, 'telephone must be at least 2 characters')
-    .max(30, 'telephone must be at most 20 characters')
-    .matches(phoneRegExp, 'Phone number is not valid')
-    .required('telephone must be at least 2 characters'),
-  telephone_alt: Yup.string()
-    .min(2, 'telephone must be at least 2 characters')
-    .max(30, 'telephone must be at most 20 characters')
-    .matches(phoneRegExp, 'Phone number is not valid')
-    .notRequired(),
+    .min(2)
+    .max(30)
+    .matches(phoneRegExp, 'telephone number is not valid')
+    .required(),
+  telephone_alt: Yup.string().max(50),
 });
 
 export const updateUserValidationSchema = Yup.object().shape({
-  id: Yup.number().required(),
-  user_title: Yup.string().required(),
-  firstname: Yup.string().required(),
-  middlename: Yup.string().notRequired(),
-  lastname: Yup.string().required(),
-  username: Yup.string().notRequired(),
-  preferredname: Yup.string().notRequired(),
+  firstname: Yup.string()
+    .min(2)
+    .max(50)
+    .required(),
+  middlename: Yup.string()
+    .notRequired()
+    .max(50),
+  preferredname: Yup.string()
+    .notRequired()
+    .max(50),
+  lastname: Yup.string()
+    .min(2)
+    .max(50)
+    .required(),
   gender: Yup.string().required(),
   nationality: Yup.number().required(),
+  user_title: Yup.string().required(),
+  email: Yup.string()
+    .email()
+    .required(),
   birthdate: Yup.date()
     .min(new Date(1900, 1, 1), 'You are not that old')
     .test('DOB', 'You must be at least 18 years old', value => {
@@ -111,33 +132,22 @@ export const updateUserValidationSchema = Yup.object().shape({
         return true;
       }
     })
-    .required(),
+    .required('Please specify your birth date'),
   organisation: Yup.number().required(),
-  department: Yup.string().required(),
-  position: Yup.string().required(),
-  email: Yup.string()
-    .email()
+  department: Yup.string()
+    .min(2)
+    .max(50)
+    .required(),
+  position: Yup.string()
+    .min(2)
+    .max(50)
     .required(),
   telephone: Yup.string()
-    .min(2, 'telephone must be at least 2 characters')
-    .max(30, 'telephone must be at most 20 characters')
-    .matches(phoneRegExp, 'Phone number is not valid')
+    .min(2)
+    .max(30)
+    .matches(phoneRegExp, 'telephone number is not valid')
     .required(),
-  telephone_alt: Yup.string()
-    .test('telephone_alt', 'Provided number is not valid', value => {
-      if (!value) {
-        return true;
-      }
-
-      return phoneRegExp.test(value);
-    })
-    .notRequired(),
-  placeholder: Yup.bool().notRequired(),
-  roles: Yup.array()
-    .of(Yup.number())
-    .notRequired(),
-  orcid: Yup.string().notRequired(),
-  refreshToken: Yup.string().notRequired(),
+  telephone_alt: Yup.string().max(50),
 });
 
 export const updateUserRolesValidationSchema = Yup.object().shape({
