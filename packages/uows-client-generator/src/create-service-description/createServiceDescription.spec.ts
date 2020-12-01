@@ -3,7 +3,7 @@ import rewire from 'rewire';
 import { populateFuncts } from '../create-service-description/createServiceDescription';
 
 const app = rewire(
-  '..\\..\\lib\\create-service-description\\createServiceDescription.js'
+  '../../lib/create-service-description/createServiceDescription.js'
 );
 
 const createFunctArgDetails: any = app.__get__('createFunctArgDetails');
