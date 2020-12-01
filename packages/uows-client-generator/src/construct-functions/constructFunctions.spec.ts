@@ -1,6 +1,6 @@
 import rewire from 'rewire';
 
-const app = rewire('../../lib/construct-functions/constructFunctions.js');
+const app = rewire('../../lib/construct-functions/constructFunctions');
 
 const mapDataType: any = app.__get__('mapDataType');
 const constructFunctArgString: any = app.__get__('constructFunctArgString');

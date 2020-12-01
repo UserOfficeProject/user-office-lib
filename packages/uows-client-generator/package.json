@@ -13,7 +13,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "jest --config jestconfig.json",
+    "test": "npm run build && jest --config jestconfig.json",
     "clean": "rm -rf ./lib",
     "build": "npm run clean && tsc -p ./tsconfig.build.json",
     "start": "ts-node src/index.ts"
