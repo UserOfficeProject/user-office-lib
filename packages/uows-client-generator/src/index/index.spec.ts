@@ -3,8 +3,11 @@ import path from 'path';
 
 const getLibPath = (): string => {
   const fullPath: string = __dirname;
-  let pathList: string[] = fullPath.split('/');
+
+  const isWin = process.platform === 'win32';
+  let pathList: string[] = isWin ? fullPath.split('\\') : fullPath.split('/');
   pathList = pathList.slice(0, pathList.length - 2);
+
   let libPath = pathList.join('/');
   libPath += '/lib/index';
 
