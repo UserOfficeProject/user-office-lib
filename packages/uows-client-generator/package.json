@@ -1,6 +1,6 @@
 {
   "name": "@stfc-user-programme/uows_client_generator",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Generates an interface for consumning the User Office Web Service",
   "main": "lib/index/index.js",
   "author": "STFC",
@@ -26,12 +26,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@types/jest": "^26.0.15",
-    "@types/rewire": "^2.5.28",
-    "@types/soap": "^0.21.0",
-    "rewire": "^5.0.0",
     "soap": "^0.34.0",
-    "ts-jest": "^26.4.4",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
   },
@@ -39,6 +34,8 @@
     "uows-client-generator": "lib/index/index.js"
   },
   "devDependencies": {
+    "@types/rewire": "^2.5.28",
+    "rewire": "^5.0.0",
     "@types/jest": "^26.0.15",
     "jest": "^26.6.3",
     "ts-jest": "^26.4.4"
