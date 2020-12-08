@@ -20,7 +20,7 @@ const generateCode = (obj: any): void => {
   const filePath: string = process.argv[3] ? process.argv[3] : defaultFilePath;
 
   /*eslint quotes: ["error", "single", { "avoidEscape": true }]*/
-  fs.writeFileSync(filePath, 'import * as soap from "soap";\n\n');
+  fs.writeFileSync(filePath, "import * as soap from 'soap';\n\n");
   fs.appendFileSync(filePath, 'export default class UOWSSoapClient {\n\n');
   fs.appendFileSync(filePath, 'private wsdlUrl: string;\n');
   fs.appendFileSync(
@@ -51,6 +51,7 @@ const createInterface = (): void => {
       generateCode(obj);
     })
     .catch((err: any) => {
+      process.exitCode = 1;
       console.error(err);
     });
 };

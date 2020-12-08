@@ -13,10 +13,10 @@
     "lib"
   ],
   "scripts": {
-    "test": "npm run build && jest --config jestconfig.json",
+    "test": "npm run start && jest --config jestconfig.json",
     "clean": "rm -rf ./lib",
     "build": "npm run clean && tsc -p ./tsconfig.build.json",
-    "start": "ts-node src/index/index.ts"
+    "start": "ts-node ./src/index/index.ts ./src/UserOfficeWebServiceTest.wsdl ./src/UOWSServiceClient/UOWSServiceClient.ts"
   },
   "repository": {
     "type": "git",
@@ -34,10 +34,10 @@
     "uows-client-generator": "lib/index/index.js"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.17",
     "@types/rewire": "^2.5.28",
-    "rewire": "^5.0.0",
-    "@types/jest": "^26.0.15",
     "jest": "^26.6.3",
+    "rewire": "^5.0.0",
     "ts-jest": "^26.4.4"
   }
 }
