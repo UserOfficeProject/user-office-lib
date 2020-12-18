@@ -1,36 +1,18 @@
-import { exec } from 'child_process';
-import path from 'path';
+import * as fs from 'fs';
 
-const getLibPath = (): string => {
-  const fullPath: string = __dirname;
+import { getRootPath, cli } from '../test-utils/test-utils';
 
-  const isWin = process.platform === 'win32';
-  let pathList: string[] = isWin ? fullPath.split('\\') : fullPath.split('/');
-  pathList = pathList.slice(0, pathList.length - 2);
-
-  let libPath = pathList.join('/');
-  libPath += '/lib/index';
-
-  return libPath;
-};
-
-const cli = (args: string[]): Promise<any> => {
-  return new Promise(resolve => {
-    exec(
-      `node ${path.resolve(getLibPath() + ' ')} ${args.join(' ')}`,
-      (error, stdout, stderr) => {
-        resolve({
-          code: error && error.code ? error.code : 0,
-          error,
-          stdout,
-          stderr,
-        });
-      }
-    );
-  });
-};
+const clientFilePath: string =
+  '/src/UOWSServiceClient/UOWSServiceClientIndexTest.ts';
 
 test('Code should be 0', async () => {
-  const result: any = await cli(['../UserOfficeWebServiceTest.wsdl']);
+  const outputFilePath: string = getRootPath(clientFilePath);
+
+  const wsdlFilePath: string = getRootPath(
+    '/src/UserOfficeWebServiceTest.wsdl'
+  );
+
+  const result: any = await cli([wsdlFilePath, outputFilePath], '.');
+  if (result.code === 0) fs.unlinkSync(`.${clientFilePath}`);
   expect(result.code).toBe(0);
 });

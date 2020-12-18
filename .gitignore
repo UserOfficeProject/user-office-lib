@@ -9,5 +9,6 @@ lib
 
 .vscode/launch.json
 .vscode/settings.json
+lerna-debug.log
 
 #
