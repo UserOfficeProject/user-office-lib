@@ -15,9 +15,17 @@ To run this tool from anywhere, install it using the following command:
 
 ## How to Run
 
-To run the tool use the following in the command line:
+To run the tool, use the following in the command line:
 
 `uows-client-generator <wsdl_url> <output_path>`
+
+Alternatively, you can provide the names for the arguments to use them in any order:
+
+`uows-client-generator --wsdl=<wsdl_url> --outputPath=<output_path>`
+
+Or
+
+`uows-client-generator --w=<wsdl_url> --o=<output_path>`
 
 There are default values for both parameters: \
 wsdl_url: 'https://api.facilities.rl.ac.uk/ws/UserOfficeWebService?wsdl' \

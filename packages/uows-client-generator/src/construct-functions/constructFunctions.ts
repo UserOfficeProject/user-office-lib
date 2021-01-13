@@ -72,12 +72,10 @@ export const makeArgsObjTemplate: string = `   private makeArgsObj(functName: st
           }\n\n`;
 
 //A string specifying the constructor for the UOWSSoapInterface class
-export const constructorTemplate = (defaultWsdl: string) => {
+export const constructorTemplate = (wsdl: string) => {
   return `   public constructor(wsdlUrl?: string) {
               if(wsdlUrl == null)
-                  this.wsdlUrl = '${
-                    process.argv[2] ? process.argv[2] : defaultWsdl
-                  }';
+                  this.wsdlUrl = '${wsdl}';
               else
                   this.wsdlUrl = wsdlUrl;
           }\n\n`;
