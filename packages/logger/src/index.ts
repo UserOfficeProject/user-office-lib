@@ -119,20 +119,6 @@ class ConsoleLogger implements Logger {
   }
 }
 
-/* eslint-disable @typescript-eslint/no-empty-function */
-export class MutedLogger implements Logger {
-  logInfo(_message: string, _context: object): void {}
-  logWarn(_message: string, _context: object): void {}
-  logDebug(_message: string, _context: object): void {}
-  logError(_message: string, _context: object): void {}
-  logException(
-    _message: string,
-    _exception: Error | string,
-    _context?: object
-  ): void {}
-}
-/* eslint-enable @typescript-eslint/no-empty-function */
-
 export interface Logger {
   logInfo(message: string, context: object): void;
   logWarn(message: string, context: object): void;
@@ -151,22 +137,15 @@ class LoggerFactory {
     if (this.logger) {
       return this.logger;
     }
-    const env = process.env.NODE_ENV || 'unset';
-    if (env === 'development') {
-      this.logger = new ConsoleLogger();
-      /*this.logger = new GrayLogLogger(
-        process.env.GRAYLOG_SERVER!,
-        parseInt(process.env.GRAYLOG_PORT!),
-        process.env.NODE_ENV
-      );*/
+
+    const server = process.env.GRAYLOG_SERVER;
+    const port = process.env.GRAYLOG_PORT;
+
+    if (server && port) {
+      const env = process.env.NODE_ENV || 'unset';
+      this.logger = new GrayLogLogger(server, parseInt(port), env);
     } else {
-      const server = process.env.GRAYLOG_SERVER;
-      const port = parseInt(process.env.GRAYLOG_PORT || '0');
-      if (server && port) {
-        this.logger = new GrayLogLogger(server, port, env);
-      } else {
-        this.logger = new MutedLogger();
-      }
+      this.logger = new ConsoleLogger();
     }
 
     return this.logger;
