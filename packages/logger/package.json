@@ -1,6 +1,6 @@
 {
   "name": "@esss-swap/duo-logger",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Shared GrayLogger implementation",
   "author": "SWAP",
   "license": "ISC",
