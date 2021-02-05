@@ -3,14 +3,18 @@ import * as Yup from 'yup';
 export const createSEPValidationSchema = Yup.object().shape({
   code: Yup.string().required(),
   description: Yup.string().required(),
-  numberRatingsRequired: Yup.number().min(2),
+  numberRatingsRequired: Yup.number()
+    .min(2)
+    .required(),
 });
 
 export const updateSEPValidationSchema = Yup.object().shape({
   id: Yup.number().required(),
   code: Yup.string().required(),
   description: Yup.string().required(),
-  numberRatingsRequired: Yup.number().min(2),
+  numberRatingsRequired: Yup.number()
+    .min(2)
+    .required(),
 });
 
 export const assignSEPChairOrSecretaryValidationSchema = (UserRole: any) =>
