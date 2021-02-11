@@ -22,19 +22,15 @@ export const submitProposalValidationSchema = Yup.object().shape({
 export const deleteProposalValidationSchema = submitProposalValidationSchema;
 export const proposalNotifyValidationSchema = submitProposalValidationSchema;
 
-export const administrationProposalBEValidationSchema = Yup.object().shape({
+export const administrationProposalValidationSchema = Yup.object().shape({
   id: Yup.number().required(),
+  statusId: Yup.number().nullable(),
   finalStatus: Yup.string().nullable(),
-  status: Yup.string().nullable(),
   commentForUser: Yup.string().nullable(),
   commentForManagement: Yup.string().nullable(),
-});
-
-export const administrationProposalValidationSchema = Yup.object().shape({
-  status: Yup.string().nullable(),
-  timeAllocation: Yup.number().nullable(),
-  comment: Yup.string().nullable(),
-  publicComment: Yup.string().nullable(),
+  rankOrder: Yup.number()
+    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
+    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
 });
 
 const MAX_TITLE_LEN = 175;
