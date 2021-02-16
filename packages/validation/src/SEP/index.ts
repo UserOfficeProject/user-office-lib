@@ -19,13 +19,13 @@ export const updateSEPValidationSchema = Yup.object().shape({
 
 export const assignSEPChairOrSecretaryValidationSchema = (UserRole: any) =>
   Yup.object().shape({
-    addSEPMembersRole: Yup.object()
+    assignChairOrSecretaryToSEPInput: Yup.object()
       .shape({
-        userIDs: Yup.array(Yup.number()).required(),
-        roleID: Yup.number()
+        userId: Yup.number().required(),
+        roleId: Yup.number()
           .oneOf([UserRole.SEP_CHAIR, UserRole.SEP_SECRETARY])
           .required(),
-        SEPID: Yup.number().required(),
+        sepId: Yup.number().required(),
       })
       .required(),
   });
