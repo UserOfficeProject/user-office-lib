@@ -13,7 +13,7 @@ export enum Queue {
 
 export type ConsumerCallback = (
   type: string,
-  message: object,
+  message: Record<string, unknown>,
   properties: MessageProperties
 ) => Promise<void>;
 
@@ -87,7 +87,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
       logger.logInfo('RabbitMQMessageBroker: Connected', {});
 
-      this.connection.on('error', err => {
+      this.connection.on('error', (err) => {
         logger.logError('RabbitMQMessageBroker: Connection error', err);
       });
 
@@ -112,7 +112,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
       if (this.connection) {
         await this.connection
           .close()
-          .catch(e =>
+          .catch((e) =>
             logger.logError(
               'RabbitMQMessageBroker: failed to close connection in try-catch',
               e
@@ -149,7 +149,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
       this.flushMessages();
     });
 
-    this.channel.on('error', err => {
+    this.channel.on('error', (err) => {
       logger.logError('RabbitMQMessageBroker: Channel error', err);
     });
 
@@ -192,14 +192,14 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
         await this.channel.consume(
           queue,
-          msg => {
+          (msg) => {
             // is this even possible???
             if (!msg) {
               return;
             }
 
             const stringifiedContent = msg.content.toString();
-            let content: object = {};
+            let content: Record<string, unknown> = {};
 
             try {
               content = JSON.parse(stringifiedContent);
@@ -235,7 +235,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
                  */
                 this.channel?.ack(msg);
               })
-              .catch(err => {
+              .catch((err) => {
                 logger.logError(
                   `RabbitMQMessageBroker: Registered consumer failed (${queue})`,
                   { ...msg, content, err }

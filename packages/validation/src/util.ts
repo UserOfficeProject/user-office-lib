@@ -9,7 +9,9 @@ export const minCharactersMsg = ({ min }: { min: number }) =>
 export const maxCharactersMsg = ({ max }: { max: number }) =>
   `Must be at most ${max} characters`;
 
-export const oneOfMsg = (types: object | Array<string | number>) =>
+export const oneOfMsg = (
+  types: Record<string, string> | Array<string | number>
+) =>
   `Must be one of the following values: ${
     Array.isArray(types) ? types.join(', ') : Object.values(types).join(', ')
   }`;

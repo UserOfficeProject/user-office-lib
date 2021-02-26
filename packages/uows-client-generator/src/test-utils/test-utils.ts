@@ -15,7 +15,7 @@ export const getRootPath = (append: string): string => {
 };
 
 export const cli = (args: string[], cwd: string): Promise<any> => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     exec(
       `ts-node ${path.resolve(getRootPath('/src/index/index.ts'))} ${args.join(
         ' '

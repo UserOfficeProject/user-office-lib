@@ -4,12 +4,8 @@ const firstStepCreateCallValidationSchema = Yup.object().shape({
   shortCode: Yup.string().required('Short Code is required'),
   startCall: Yup.date().required('Start call date is required'),
   endCall: Yup.date().required('End call date is required'),
-  templateId: Yup.number()
-    .nullable()
-    .notRequired(),
-  proposalWorkflowId: Yup.number()
-    .nullable()
-    .notRequired(),
+  templateId: Yup.number().nullable().notRequired(),
+  proposalWorkflowId: Yup.number().nullable().notRequired(),
 });
 
 const firstStepUpdateCallValidationSchema = firstStepCreateCallValidationSchema.concat(
@@ -23,12 +19,8 @@ const firstStepUpdateCallValidationSchema = firstStepCreateCallValidationSchema.
 const secondStepCallValidationSchema = Yup.object().shape({
   startReview: Yup.date().required('Start review date is required'),
   endReview: Yup.date().required('End review date is required'),
-  startSEPReview: Yup.date()
-    .nullable()
-    .notRequired(),
-  endSEPReview: Yup.date()
-    .nullable()
-    .notRequired(),
+  startSEPReview: Yup.date().nullable().notRequired(),
+  endSEPReview: Yup.date().nullable().notRequired(),
   surveyComment: Yup.string()
     .max(100, 'Survey comment should be no longer than 100 characters')
     .required('Survey comment is required'),

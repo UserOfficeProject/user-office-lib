@@ -8,16 +8,12 @@ export const createProposalStatusValidationSchema = Yup.object()
       .test(
         'noWhiteSpaces',
         'Should not contain white spaces',
-        value => !/\s/.test(value as string)
+        (value) => !/\s/.test(value as string)
       )
       .uppercase()
       .required(),
-    name: Yup.string()
-      .max(100)
-      .required(),
-    description: Yup.string()
-      .max(200)
-      .required(),
+    name: Yup.string().max(100).required(),
+    description: Yup.string().max(200).required(),
   })
   .strict(true);
 
@@ -30,16 +26,12 @@ export const updateProposalStatusValidationSchema = Yup.object()
       .test(
         'noWhiteSpaces',
         'Should not contain white spaces',
-        value => !/\s/.test(value as string)
+        (value) => !/\s/.test(value as string)
       )
       .uppercase()
       .required(),
-    name: Yup.string()
-      .max(100)
-      .required(),
-    description: Yup.string()
-      .max(200)
-      .required(),
+    name: Yup.string().max(100).required(),
+    description: Yup.string().max(200).required(),
   })
   .strict(true);
 
