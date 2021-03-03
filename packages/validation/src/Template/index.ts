@@ -49,9 +49,7 @@ export const updateQuestionTemplateRelationValidationSchema = Yup.object().shape
     topicId: Yup.number().notRequired(),
     sortOrder: Yup.number().notRequired(),
     config: Yup.string().notRequired(),
-    dependency: Yup.object()
-      .nullable()
-      .notRequired(),
+    dependency: Yup.object().nullable().notRequired(),
   }
 );
 
@@ -69,9 +67,7 @@ export const updateTopicOrderValidationSchema = Yup.object().shape({
 export const updateQuestionsTopicRelsValidationSchema = Yup.object().shape({
   templateId: Yup.number().required(),
   topicId: Yup.number().required(),
-  questionIds: Yup.array()
-    .of(Yup.string())
-    .required(),
+  questionIds: Yup.array().of(Yup.string()).required(),
 });
 
 export const updateTemplateValidationSchema = Yup.object().shape({

@@ -3,13 +3,16 @@ import * as Yup from 'yup';
 const firstStepCreateCallValidationSchema = Yup.object().shape({
   shortCode: Yup.string().required('Short Code is required'),
   startCall: Yup.date().required('Start call date is required'),
-  endCall: Yup.date().required('End call date is required'),
-  templateId: Yup.number()
-    .nullable()
-    .notRequired(),
-  proposalWorkflowId: Yup.number()
-    .nullable()
-    .notRequired(),
+  endCall: Yup.date()
+    .required('End call date is required')
+    .when('startCall', (startCall: Date, schema: Yup.DateSchema) => {
+      return schema.min(
+        startCall,
+        'End call date can not be before start call date.'
+      );
+    }),
+  templateId: Yup.number().nullable().notRequired(),
+  proposalWorkflowId: Yup.number().nullable().notRequired(),
 });
 
 const firstStepUpdateCallValidationSchema = firstStepCreateCallValidationSchema.concat(
@@ -22,13 +25,24 @@ const firstStepUpdateCallValidationSchema = firstStepCreateCallValidationSchema.
 
 const secondStepCallValidationSchema = Yup.object().shape({
   startReview: Yup.date().required('Start review date is required'),
-  endReview: Yup.date().required('End review date is required'),
-  startSEPReview: Yup.date()
-    .nullable()
-    .notRequired(),
+  endReview: Yup.date()
+    .required('End review date is required')
+    .when('startReview', (startReview: Date, schema: Yup.DateSchema) => {
+      return schema.min(
+        startReview,
+        'End review date can not be before start review date.'
+      );
+    }),
+  startSEPReview: Yup.date().nullable().notRequired(),
   endSEPReview: Yup.date()
     .nullable()
-    .notRequired(),
+    .notRequired()
+    .when('startSEPReview', (startSEPReview: Date, schema: Yup.DateSchema) => {
+      return schema.min(
+        startSEPReview,
+        'End SEP review date can not be before start SEP review date.'
+      );
+    }),
   surveyComment: Yup.string()
     .max(100, 'Survey comment should be no longer than 100 characters')
     .required('Survey comment is required'),
@@ -36,9 +50,23 @@ const secondStepCallValidationSchema = Yup.object().shape({
 
 const thirdStepCallValidationSchema = Yup.object().shape({
   startNotify: Yup.date().required('Start notify date is required'),
-  endNotify: Yup.date().required('End notify date is required'),
+  endNotify: Yup.date()
+    .required('End notify date is required')
+    .when('startNotify', (startNotify: Date, schema: Yup.DateSchema) => {
+      return schema.min(
+        startNotify,
+        'End notify date can not be before start notify date.'
+      );
+    }),
   startCycle: Yup.date().required('Start cycle date is required'),
-  endCycle: Yup.date().required('End cycle date is required'),
+  endCycle: Yup.date()
+    .required('End cycle date is required')
+    .when('startCycle', (startCycle: Date, schema: Yup.DateSchema) => {
+      return schema.min(
+        startCycle,
+        'End cycle date can not be before start cycle date.'
+      );
+    }),
   cycleComment: Yup.string()
     .max(100, 'Cycle comment should be no longer than 100 characters')
     .required('Cycle comment is required'),

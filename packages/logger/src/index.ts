@@ -32,7 +32,11 @@ class GrayLogLogger implements Logger {
     });
   }
 
-  private createPayload(level: LEVEL, message: string, context: object) {
+  private createPayload(
+    level: LEVEL,
+    message: string,
+    context: Record<string, unknown>
+  ) {
     return {
       levelStr: LEVEL[level],
       title: message,
@@ -42,26 +46,26 @@ class GrayLogLogger implements Logger {
     };
   }
 
-  logInfo(message: string, context: object) {
+  logInfo(message: string, context: Record<string, unknown>) {
     this.log.info(message, this.createPayload(LEVEL.INFO, message, context));
   }
 
-  logWarn(message: string, context: object) {
+  logWarn(message: string, context: Record<string, unknown>) {
     this.log.warning(message, this.createPayload(LEVEL.WARN, message, context));
   }
 
-  logDebug(message: string, context: object) {
+  logDebug(message: string, context: Record<string, unknown>) {
     this.log.debug(message, this.createPayload(LEVEL.DEBUG, message, context));
   }
 
-  logError(message: string, context: object) {
+  logError(message: string, context: Record<string, unknown>) {
     this.log.error(message, this.createPayload(LEVEL.ERROR, message, context));
   }
 
   logException(
     message: string,
     exception: Error | string,
-    context?: object
+    context?: Record<string, unknown>
   ): void {
     if (exception !== null) {
       this.logError(message, { exception, ...context });
@@ -72,26 +76,26 @@ class GrayLogLogger implements Logger {
 }
 
 class ConsoleLogger implements Logger {
-  logInfo(message: string, context: object) {
+  logInfo(message: string, context: Record<string, unknown>) {
     this.log(LEVEL.INFO, message, context);
   }
 
-  logWarn(message: string, context: object) {
+  logWarn(message: string, context: Record<string, unknown>) {
     this.log(LEVEL.WARN, message, context);
   }
 
-  logDebug(message: string, context: object) {
+  logDebug(message: string, context: Record<string, unknown>) {
     this.log(LEVEL.DEBUG, message, context);
   }
 
-  logError(message: string, context: object) {
+  logError(message: string, context: Record<string, unknown>) {
     this.log(LEVEL.ERROR, message, context);
   }
 
   logException(
     message: string,
     exception: Error | string,
-    context?: object
+    context?: Record<string, unknown>
   ): void {
     if (exception instanceof Error) {
       this.logError(
@@ -114,20 +118,20 @@ class ConsoleLogger implements Logger {
     }
   }
 
-  log(level: LEVEL, message: string, context: object) {
+  log(level: LEVEL, message: string, context: Record<string, unknown>) {
     console.log(`${level} - ${message} \n ${safeStringify(context)}`);
   }
 }
 
 export interface Logger {
-  logInfo(message: string, context: object): void;
-  logWarn(message: string, context: object): void;
-  logDebug(message: string, context: object): void;
-  logError(message: string, context: object): void;
+  logInfo(message: string, context: Record<string, unknown>): void;
+  logWarn(message: string, context: Record<string, unknown>): void;
+  logDebug(message: string, context: Record<string, unknown>): void;
+  logError(message: string, context: Record<string, unknown>): void;
   logException(
     message: string,
     exception: Error | string,
-    context?: object
+    context?: Record<string, unknown>
   ): void;
 }
 

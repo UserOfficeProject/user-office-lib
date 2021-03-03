@@ -17,9 +17,7 @@ export const createScheduledEventValidationSchema = (
       .oneOf(Object.keys(bookingTypesMap), oneOfMsg(bookingTypesMap))
       .required('Booking type is required'),
 
-    startsAt: Yup.date()
-      .typeError(TYPE_ERR_INVALID_DATE)
-      .required(),
+    startsAt: Yup.date().typeError(TYPE_ERR_INVALID_DATE).required(),
 
     endsAt: Yup.date()
       .typeError(TYPE_ERR_INVALID_DATE)
@@ -33,7 +31,5 @@ export const createScheduledEventValidationSchema = (
       })
       .required(),
 
-    description: Yup.string()
-      .max(30, maxCharactersMsg)
-      .nullable(),
+    description: Yup.string().max(30, maxCharactersMsg).nullable(),
   });
