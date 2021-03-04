@@ -28,3 +28,6 @@ export const NumericalID = ID.matches(
   /^[\d]+$/,
   'Invalid NumericalID'
 ).typeError('Invalid NumericalID');
+
+export const isValidDate = (d: Date) =>
+  d instanceof Date && !isNaN(d.getTime());

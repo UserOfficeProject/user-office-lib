@@ -1,11 +1,17 @@
 import * as Yup from 'yup';
 
+import { isValidDate } from '../util';
+
 const firstStepCreateCallValidationSchema = Yup.object().shape({
   shortCode: Yup.string().required('Short Code is required'),
   startCall: Yup.date().required('Start call date is required'),
   endCall: Yup.date()
     .required('End call date is required')
     .when('startCall', (startCall: Date, schema: Yup.DateSchema) => {
+      if (!isValidDate(startCall)) {
+        return schema;
+      }
+
       return schema.min(
         startCall,
         'End call date can not be before start call date.'
@@ -28,6 +34,10 @@ const secondStepCallValidationSchema = Yup.object().shape({
   endReview: Yup.date()
     .required('End review date is required')
     .when('startReview', (startReview: Date, schema: Yup.DateSchema) => {
+      if (!isValidDate(startReview)) {
+        return schema;
+      }
+
       return schema.min(
         startReview,
         'End review date can not be before start review date.'
@@ -38,6 +48,10 @@ const secondStepCallValidationSchema = Yup.object().shape({
     .nullable()
     .notRequired()
     .when('startSEPReview', (startSEPReview: Date, schema: Yup.DateSchema) => {
+      if (!isValidDate(startSEPReview)) {
+        return schema;
+      }
+
       return schema.min(
         startSEPReview,
         'End SEP review date can not be before start SEP review date.'
@@ -53,6 +67,10 @@ const thirdStepCallValidationSchema = Yup.object().shape({
   endNotify: Yup.date()
     .required('End notify date is required')
     .when('startNotify', (startNotify: Date, schema: Yup.DateSchema) => {
+      if (!isValidDate(startNotify)) {
+        return schema;
+      }
+
       return schema.min(
         startNotify,
         'End notify date can not be before start notify date.'
@@ -62,6 +80,10 @@ const thirdStepCallValidationSchema = Yup.object().shape({
   endCycle: Yup.date()
     .required('End cycle date is required')
     .when('startCycle', (startCycle: Date, schema: Yup.DateSchema) => {
+      if (!isValidDate(startCycle)) {
+        return schema;
+      }
+
       return schema.min(
         startCycle,
         'End cycle date can not be before start cycle date.'
