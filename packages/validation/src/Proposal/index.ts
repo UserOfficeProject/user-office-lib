@@ -31,6 +31,11 @@ export const administrationProposalValidationSchema = Yup.object().shape({
   rankOrder: Yup.number()
     .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
     .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
+  managementTimeAllocation: Yup.number()
+    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
+    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
+    .nullable(),
+  managementDecisionSubmitted: Yup.bool().nullable(),
 });
 
 const MAX_TITLE_LEN = 175;
