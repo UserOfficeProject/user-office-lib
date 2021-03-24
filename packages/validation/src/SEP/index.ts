@@ -55,3 +55,23 @@ export const updateTimeAllocationValidationSchema = Yup.object({
     .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
     .nullable(),
 });
+
+export const saveSepMeetingDecisionValidationSchema = Yup.object().shape({
+  proposalId: Yup.number().required(),
+  commentForUser: Yup.string().nullable(),
+  commentForManagement: Yup.string().nullable(),
+  recommendation: Yup.string().nullable(),
+  rankOrder: Yup.number()
+    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
+    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
+  submitted: Yup.bool().nullable(),
+});
+
+export const overwriteSepMeetingDecisionRankingValidationSchema = Yup.object().shape(
+  {
+    proposalId: Yup.number().required(),
+    rankOrder: Yup.number()
+      .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
+      .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
+  }
+);
