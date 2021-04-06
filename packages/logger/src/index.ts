@@ -1,4 +1,3 @@
-/*eslint @typescript-eslint/no-unused-vars: ["warn", { "argsIgnorePattern": "^_" }]*/
 import safeStringify from 'fast-safe-stringify';
 
 export enum LEVEL {
@@ -67,7 +66,15 @@ class GrayLogLogger implements Logger {
     exception: Error | string,
     context?: Record<string, unknown>
   ): void {
-    if (exception !== null) {
+    if (exception instanceof Error) {
+      // explicitly extract the properties and pass them on
+      // so when the error is stringified they show up properly
+      const { name, message: msg, stack } = exception;
+      this.logError(message, {
+        exception: { name, message: msg, stack },
+        ...context,
+      });
+    } else if (exception !== null) {
       this.logError(message, { exception, ...context });
     } else {
       this.logError(message, context || {});
@@ -98,28 +105,26 @@ class ConsoleLogger implements Logger {
     context?: Record<string, unknown>
   ): void {
     if (exception instanceof Error) {
-      this.logError(
-        message,
-        (() => {
-          const { name, message, stack } = exception;
-
-          return {
-            exception: { name, message, stack },
-            levelStr: LEVEL[LEVEL.ERROR],
-            ...context,
-          };
-        })()
-      );
-      if (typeof exception === 'string' || exception instanceof String) {
-        this.logError(message, { exception, ...context });
-      } else {
-        this.logError(message, context || {});
-      }
+      // explicitly extract the properties and pass them on
+      // so when the error is stringified they show up properly
+      const { name, message: msg, stack } = exception;
+      this.logError(message, {
+        exception: { name, message: msg, stack },
+        ...context,
+      });
+    } else if (exception !== null) {
+      this.logError(message, { exception, ...context });
+    } else {
+      this.logError(message, context || {});
     }
   }
 
   log(level: LEVEL, message: string, context: Record<string, unknown>) {
-    console.log(`${level} - ${message} \n ${safeStringify(context)}`);
+    console.log(
+      `[${new Date().toISOString()}] ${level} - ${message} \n ${safeStringify(
+        context
+      )}`
+    );
   }
 }
 

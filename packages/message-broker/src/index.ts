@@ -61,8 +61,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
         this.messageBuffer.push({ queue, type, msg });
       }
     } catch (err) {
-      logger.logError('sending message failed at some point', {
-        err,
+      logger.logException('sending message failed at some point', err, {
         queue,
         type,
         msg,
@@ -88,7 +87,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
       logger.logInfo('RabbitMQMessageBroker: Connected', {});
 
       this.connection.on('error', (err) => {
-        logger.logError('RabbitMQMessageBroker: Connection error', err);
+        logger.logException('RabbitMQMessageBroker: Connection error', err);
       });
 
       this.connection.on('close', () => {
@@ -105,7 +104,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
       logger.logInfo('RabbitMQMessageBroker: Setup finished', {});
     } catch (e) {
-      logger.logError('RabbitMQMessageBroker: Setup failed:', e.message);
+      logger.logException('RabbitMQMessageBroker: Setup failed:', e.message);
 
       // if we already have a connection but failed to register channel
       // close the channel and restart the process
@@ -113,7 +112,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
         await this.connection
           .close()
           .catch((e) =>
-            logger.logError(
+            logger.logException(
               'RabbitMQMessageBroker: failed to close connection in try-catch',
               e
             )
@@ -150,7 +149,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
     });
 
     this.channel.on('error', (err) => {
-      logger.logError('RabbitMQMessageBroker: Channel error', err);
+      logger.logException('RabbitMQMessageBroker: Channel error', err);
     });
 
     this.channel.on('close', () => {
@@ -204,8 +203,9 @@ export class RabbitMQMessageBroker implements MessageBroker {
             try {
               content = JSON.parse(stringifiedContent);
             } catch (err) {
-              logger.logError(
+              logger.logException(
                 'RabbitMQMessageBroker: Failed to parse the message content',
+                err,
                 { content: stringifiedContent }
               );
 
@@ -236,9 +236,10 @@ export class RabbitMQMessageBroker implements MessageBroker {
                 this.channel?.ack(msg);
               })
               .catch((err) => {
-                logger.logError(
+                logger.logException(
                   `RabbitMQMessageBroker: Registered consumer failed (${queue})`,
-                  { ...msg, content, err }
+                  err,
+                  { ...msg, content }
                 );
                 /***
                  * Same situation we have above
@@ -255,7 +256,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
       logger.logInfo('RabbitMQMessageBroker: Consumers registered', {});
     } catch (err) {
-      logger.logError(
+      logger.logException(
         'RabbitMQMessageBroker: Failed to register consumer',
         err
       );
