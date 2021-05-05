@@ -4,6 +4,7 @@ export const createInstrumentValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
   shortCode: Yup.string().required(),
   description: Yup.string().required(),
+  managerUserId: Yup.number().required(),
 });
 
 export const updateInstrumentValidationSchema = Yup.object().shape({
@@ -11,6 +12,7 @@ export const updateInstrumentValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
   shortCode: Yup.string().required(),
   description: Yup.string().required(),
+  managerUserId: Yup.number().required(),
 });
 
 export const deleteInstrumentValidationSchema = Yup.object().shape({
