@@ -4,6 +4,7 @@ export const createInstrumentValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
   shortCode: Yup.string().required(),
   description: Yup.string().required(),
+  managerUserId: Yup.number().required(),
 });
 
 export const updateInstrumentValidationSchema = Yup.object().shape({
@@ -11,6 +12,9 @@ export const updateInstrumentValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
   shortCode: Yup.string().required(),
   description: Yup.string().required(),
+  managerUserId: Yup.number()
+    .positive('Please specify valid beamline manager')
+    .required(),
 });
 
 export const deleteInstrumentValidationSchema = Yup.object().shape({
@@ -32,7 +36,9 @@ export const removeProposalFromInstrumentValidationSchema = Yup.object().shape({
 });
 
 export const assignScientistsToInstrumentValidationSchema = Yup.object().shape({
-  scientistIds: Yup.array(Yup.number()).min(1).required(),
+  scientistIds: Yup.array(Yup.number())
+    .min(1)
+    .required(),
   instrumentId: Yup.number().required(),
 });
 
@@ -47,7 +53,9 @@ export const setAvailabilityTimeOnInstrumentValidationSchema = Yup.object().shap
   {
     callId: Yup.number().required(),
     instrumentId: Yup.number().required(),
-    availabilityTime: Yup.number().min(0).required(),
+    availabilityTime: Yup.number()
+      .min(0)
+      .required(),
   }
 );
 
