@@ -17,8 +17,13 @@ const firstStepCreateCallValidationSchema = Yup.object().shape({
         'End call date can not be before start call date.'
       );
     }),
-  templateId: Yup.number().nullable().notRequired(),
-  proposalWorkflowId: Yup.number().nullable().notRequired(),
+  templateId: Yup.number()
+    .nullable()
+    .notRequired(),
+  proposalWorkflowId: Yup.number()
+    .nullable()
+    .notRequired(),
+  managerUserId: Yup.number().required('Beamline manager is required'),
 });
 
 const firstStepUpdateCallValidationSchema = firstStepCreateCallValidationSchema.concat(
@@ -43,7 +48,9 @@ const secondStepCallValidationSchema = Yup.object().shape({
         'End review date can not be before start review date.'
       );
     }),
-  startSEPReview: Yup.date().nullable().notRequired(),
+  startSEPReview: Yup.date()
+    .nullable()
+    .notRequired(),
   endSEPReview: Yup.date()
     .nullable()
     .notRequired()
