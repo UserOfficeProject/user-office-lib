@@ -4,7 +4,9 @@ export const createInstrumentValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
   shortCode: Yup.string().required(),
   description: Yup.string().required(),
-  managerUserId: Yup.number().required(),
+  managerUserId: Yup.number()
+    .positive('Please specify beamline manager')
+    .required('Please specify beamline manager'),
 });
 
 export const updateInstrumentValidationSchema = Yup.object().shape({
@@ -13,8 +15,8 @@ export const updateInstrumentValidationSchema = Yup.object().shape({
   shortCode: Yup.string().required(),
   description: Yup.string().required(),
   managerUserId: Yup.number()
-    .positive('Please specify valid beamline manager')
-    .required(),
+    .positive('Please specify beamline manager')
+    .required('Please specify beamline manager'),
 });
 
 export const deleteInstrumentValidationSchema = Yup.object().shape({
