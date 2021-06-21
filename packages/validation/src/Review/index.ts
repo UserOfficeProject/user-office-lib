@@ -24,5 +24,5 @@ export const removeUserForReviewValidationSchema = Yup.object().shape({
 
 export const addUserForReviewValidationSchema = Yup.object().shape({
   userID: Yup.number().required(),
-  proposalID: Yup.number().required(),
+  proposalPk: Yup.number().required(),
 });

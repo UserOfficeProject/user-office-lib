@@ -16,7 +16,7 @@ export const updateProposalValidationSchema = Yup.object().shape({
 });
 
 export const submitProposalValidationSchema = Yup.object().shape({
-  proposalId: Yup.number().required(),
+  proposalPk: Yup.number().required(),
 });
 
 export const deleteProposalValidationSchema = submitProposalValidationSchema;
