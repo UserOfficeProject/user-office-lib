@@ -37,19 +37,19 @@ export const removeSEPMemberValidationSchema = Yup.object().shape({
 });
 
 export const assignProposalToSEPValidationSchema = Yup.object().shape({
-  proposalId: Yup.number().required(),
+  proposalPk: Yup.number().required(),
   sepId: Yup.number().required(),
 });
 
 export const assignSEPMemberToProposalValidationSchema = Yup.object().shape({
-  proposalId: Yup.number().required(),
+  proposalPk: Yup.number().required(),
   sepId: Yup.number().required(),
   memberId: Yup.number().required(),
 });
 
 export const updateTimeAllocationValidationSchema = Yup.object({
   sepId: Yup.number().required(),
-  proposalId: Yup.number().required(),
+  proposalPk: Yup.number().required(),
   sepTimeAllocation: Yup.number()
     .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
     .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
@@ -57,7 +57,7 @@ export const updateTimeAllocationValidationSchema = Yup.object({
 });
 
 export const saveSepMeetingDecisionValidationSchema = Yup.object().shape({
-  proposalId: Yup.number().required(),
+  proposalPk: Yup.number().required(),
   commentForUser: Yup.string().nullable(),
   commentForManagement: Yup.string().nullable(),
   recommendation: Yup.string().nullable(),
@@ -69,7 +69,7 @@ export const saveSepMeetingDecisionValidationSchema = Yup.object().shape({
 
 export const overwriteSepMeetingDecisionRankingValidationSchema = Yup.object().shape(
   {
-    proposalId: Yup.number().required(),
+    proposalPk: Yup.number().required(),
     rankOrder: Yup.number()
       .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
       .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
