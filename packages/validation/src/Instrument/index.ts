@@ -33,7 +33,7 @@ export const assignProposalsToInstrumentValidationSchema = Yup.object().shape({
 });
 
 export const removeProposalFromInstrumentValidationSchema = Yup.object().shape({
-  proposalId: Yup.number().required(),
+  proposalPk: Yup.number().required(),
   instrumentId: Yup.number().required(),
 });
 
