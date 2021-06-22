@@ -1,6 +1,6 @@
 {
   "name": "@esss-swap/duo-validation",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Duo frontend and backend validation in one place.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
