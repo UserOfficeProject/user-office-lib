@@ -23,7 +23,7 @@ export const deleteProposalValidationSchema = submitProposalValidationSchema;
 export const proposalNotifyValidationSchema = submitProposalValidationSchema;
 
 export const administrationProposalValidationSchema = Yup.object().shape({
-  id: Yup.number().required(),
+  primaryKey: Yup.number().required(),
   statusId: Yup.number().nullable(),
   finalStatus: Yup.string().nullable(),
   commentForUser: Yup.string().nullable(),
