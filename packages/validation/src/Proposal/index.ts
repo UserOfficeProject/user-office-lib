@@ -5,7 +5,7 @@ export const createProposalValidationSchema = Yup.object().shape({
 });
 
 export const updateProposalValidationSchema = Yup.object().shape({
-  id: Yup.number().required(),
+  primaryKey: Yup.number().required(),
   title: Yup.string().notRequired(),
   abstract: Yup.string().notRequired(),
   answers: Yup.array().notRequired(),
