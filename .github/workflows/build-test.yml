@@ -1,5 +1,6 @@
 name: Build and testing.
 
+# Run lerna:build and lerna:test on pull request creation against master.
 on:
   pull_request:
     branches: [master]
