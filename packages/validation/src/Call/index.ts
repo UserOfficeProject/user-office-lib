@@ -17,8 +17,8 @@ const firstStepCreateCallValidationSchema = Yup.object().shape({
         'End call date can not be before start call date.'
       );
     }),
-  templateId: Yup.number().nullable().notRequired(),
-  proposalWorkflowId: Yup.number().nullable().notRequired(),
+  templateId: Yup.number().required(),
+  proposalWorkflowId: Yup.number().required(),
 });
 
 const firstStepUpdateCallValidationSchema = firstStepCreateCallValidationSchema.concat(
@@ -47,16 +47,26 @@ const secondStepCallValidationSchema = Yup.object().shape({
   endSEPReview: Yup.date()
     .nullable()
     .notRequired()
-    .when('startSEPReview', (startSEPReview: Date, schema: Yup.DateSchema) => {
-      if (!isValidDate(startSEPReview)) {
-        return schema;
-      }
+    .when(
+      'startSEPReview',
+      (
+        startSEPReview: Date,
+        schema: Yup.DateSchema<
+          Date | null | undefined,
+          Record<string, unknown>,
+          Date | null | undefined
+        >
+      ) => {
+        if (!isValidDate(startSEPReview)) {
+          return schema;
+        }
 
-      return schema.min(
-        startSEPReview,
-        'End SEP review date can not be before start SEP review date.'
-      );
-    }),
+        return schema.min(
+          startSEPReview,
+          'End SEP review date can not be before start SEP review date.'
+        );
+      }
+    ),
   surveyComment: Yup.string()
     .max(100, 'Survey comment should be no longer than 100 characters')
     .required('Survey comment is required'),
