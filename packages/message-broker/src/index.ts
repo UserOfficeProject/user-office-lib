@@ -9,6 +9,7 @@ type Message = {
 
 export enum Queue {
   PROPOSAL = 'PROPOSAL',
+  BROADCAST = 'useroffice.fanout',
 }
 
 export type ConsumerCallback = (
@@ -19,7 +20,9 @@ export type ConsumerCallback = (
 
 export interface MessageBroker {
   sendMessage(queue: Queue, type: string, message: string): Promise<void>;
+  sendBroadcast(queue: Queue, type: string, message: string): Promise<void>;
   listenOn(queue: Queue, cb: ConsumerCallback): void;
+  listenOnBroadcast(cb: ConsumerCallback): void;
 }
 
 export class RabbitMQMessageBroker implements MessageBroker {
@@ -31,11 +34,86 @@ export class RabbitMQMessageBroker implements MessageBroker {
   private channel: Channel | null = null;
   private messageBuffer: Message[] = [];
 
+  async listenOnBroadcast(cb: ConsumerCallback) {
+    if (this.channel) {
+      await this.channel.assertExchange(Queue.BROADCAST, 'fanout', {
+        durable: true,
+      });
+      const queueName = await this.channel.assertQueue('', {
+        exclusive: true,
+      });
+      this.channel.bindQueue(queueName.queue, Queue.BROADCAST, '');
+      await this.channel.consume(
+        queueName.queue,
+        (msg) => {
+          if (!msg) {
+            return;
+          }
+
+          const stringifiedContent = msg.content.toString();
+          let content: Record<string, unknown> = {};
+
+          try {
+            content = JSON.parse(stringifiedContent);
+          } catch (err) {
+            logger.logException(
+              'RabbitMQMessageBroker: Failed to parse the message content',
+              err,
+              { content: stringifiedContent }
+            );
+
+            this.channel?.nack(msg, false, false);
+
+            return;
+          }
+
+          cb(msg.properties.type, content, msg.properties)
+            .then(() => {
+              this.channel?.ack(msg);
+            })
+            .catch((err) => {
+              logger.logException(
+                `RabbitMQMessageBroker: Registered consumer failed (${queueName.queue})`,
+                err,
+                { ...msg, content }
+              );
+              this.channel?.nack(msg, false, false);
+            });
+        },
+        { noAck: false }
+      );
+    }
+  }
+
   listenOn(queue: Queue, cb: ConsumerCallback) {
     this.consumers.push([queue, cb]);
 
     if (this.channel) {
       this.registerConsumers();
+    }
+  }
+
+  async sendBroadcast(type: string, msg: string) {
+    if (!this.channel) {
+      logger.logWarn('Channel is not available', { type, msg });
+
+      return;
+    }
+
+    try {
+      await this.channel.assertExchange(Queue.BROADCAST, 'fanout', {
+        durable: true,
+      });
+      this.channel.publish(Queue.BROADCAST, '', Buffer.from(msg), {
+        persistent: true,
+        timestamp: Date.now(),
+        type: type,
+      });
+    } catch (err) {
+      logger.logException('sending message failed at some point', err, {
+        type,
+        msg,
+      });
     }
   }
 
