@@ -19,7 +19,7 @@
   "dependencies": {
     "@types/request": "^2.48.5",
     "@types/sax": "^1.2.1",
-    "typescript": "^3.9.9"
+    "typescript": "^3.9.10"
   },
   "devDependencies": {
     "@types/node": "^12.12.55",
