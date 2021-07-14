@@ -1,5 +1,6 @@
-name: Test
+name: Build and testing.
 
+# Run lerna:build and lerna:test on pull request creation against master
 on:
   pull_request:
     branches: [master]
@@ -15,4 +16,5 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm run lerna:bootstrap
+      - run: npm run lerna:build
       - run: npm run lerna:test
