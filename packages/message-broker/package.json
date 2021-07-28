@@ -26,6 +26,6 @@
   "dependencies": {
     "@esss-swap/duo-logger": "^1.0.3",
     "@types/amqplib": "^0.5.13",
-    "amqplib": "^0.6.0"
+    "amqplib": "^0.7.1"
   }
 }
