@@ -18,7 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/request": "^2.48.5",
-    "@types/sax": "^1.2.1",
+    "@types/sax": "^1.2.2",
     "typescript": "^3.9.10"
   },
   "devDependencies": {
