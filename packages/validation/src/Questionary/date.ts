@@ -13,14 +13,18 @@ export const dateQuestionValidationSchema = (field: any) => {
     month: 'short',
     day: 'numeric',
   };
-  let schema = Yup.date().nullable().typeError('Invalid Date Format');
+  let schema;
   const config = field.config;
 
-  config.required && (schema = schema.required('This field is required'));
-
-  schema = Yup.date().transform(function (value: Date) {
-    return normalizeDate(value);
-  });
+  if (config.required) {
+    schema = Yup.date()
+      .required('This field is required')
+      .transform(function (value: Date) {
+        return normalizeDate(value);
+      });
+  } else {
+    schema = Yup.date().nullable();
+  }
 
   if (config.minDate) {
     const minDate = normalizeDate(config.minDate);
