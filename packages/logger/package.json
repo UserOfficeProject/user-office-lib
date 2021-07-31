@@ -17,7 +17,7 @@
     "build": "npm run clean && tsc -p ./tsconfig.build.json"
   },
   "dependencies": {
-    "fast-safe-stringify": "^2.0.7",
+    "fast-safe-stringify": "^2.0.8",
     "gelf-pro": "^1.3.5"
   },
   "repository": {
