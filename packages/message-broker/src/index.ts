@@ -9,6 +9,7 @@ type Message = {
 
 export enum Queue {
   PROPOSAL = 'PROPOSAL',
+  SCHEDULED_EVENTS = 'SCHEDULED_EVENTS',
   BROADCAST = 'useroffice.fanout',
 }
 
