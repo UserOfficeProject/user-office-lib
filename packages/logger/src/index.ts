@@ -101,7 +101,7 @@ class ConsoleLogger implements Logger {
 
   logException(
     message: string,
-    exception: Error | string,
+    exception: Error | string | unknown,
     context?: Record<string, unknown>
   ): void {
     if (exception instanceof Error) {
