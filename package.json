@@ -19,12 +19,12 @@
   "dependencies": {
     "@types/request": "^2.48.7",
     "@types/sax": "^1.2.3",
-    "typescript": "^3.9.10"
+    "typescript": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^12.12.55",
-    "@typescript-eslint/eslint-plugin": "^4.15.2",
-    "@typescript-eslint/parser": "^4.15.2",
+    "@typescript-eslint/eslint-plugin": "^4.32.0",
+    "@typescript-eslint/parser": "^4.32.0",
     "eslint": "^7.20.0",
     "eslint-config-prettier": "^8.0.0",
     "eslint-plugin-import": "^2.22.1",

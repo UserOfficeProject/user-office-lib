@@ -135,7 +135,7 @@ export interface Logger {
   logError(message: string, context: Record<string, unknown>): void;
   logException(
     message: string,
-    exception: Error | string,
+    exception: Error | string | unknown,
     context?: Record<string, unknown>
   ): void;
 }
