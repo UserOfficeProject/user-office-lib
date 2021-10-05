@@ -31,7 +31,7 @@
   "dependencies": {
     "moment": "^2.29.0",
     "yup": "^0.32.9",
-    "sanitize-html": "^2.4.0"
+    "sanitize-html": "^2.5.0"
   },
   "devDependencies": {
     "@types/yup": "^0.29.0",
