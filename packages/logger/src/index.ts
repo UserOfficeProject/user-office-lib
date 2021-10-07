@@ -63,7 +63,7 @@ class GrayLogLogger implements Logger {
 
   logException(
     message: string,
-    exception: Error | string,
+    exception: unknown,
     context?: Record<string, unknown>
   ): void {
     if (exception instanceof Error) {
@@ -101,7 +101,7 @@ class ConsoleLogger implements Logger {
 
   logException(
     message: string,
-    exception: Error | string | unknown,
+    exception: unknown,
     context?: Record<string, unknown>
   ): void {
     if (exception instanceof Error) {
@@ -135,7 +135,7 @@ export interface Logger {
   logError(message: string, context: Record<string, unknown>): void;
   logException(
     message: string,
-    exception: Error | string | unknown,
+    exception: unknown,
     context?: Record<string, unknown>
   ): void;
 }
