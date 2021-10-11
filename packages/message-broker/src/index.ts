@@ -183,7 +183,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
       logger.logInfo('RabbitMQMessageBroker: Setup finished', {});
     } catch (e) {
-      logger.logException('RabbitMQMessageBroker: Setup failed:', e.message);
+      logger.logException('RabbitMQMessageBroker: Setup failed:', e);
 
       // if we already have a connection but failed to register channel
       // close the channel and restart the process
