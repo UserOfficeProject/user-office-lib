@@ -40,11 +40,11 @@ export const createFunctTemplate = (
 
   if (argDetails.length > 0) makeArgObjArgs = ', ' + makeArgObjArgs;
 
-  return `    public ${functName}(${wrapperArgString}): any {
-                  let refinedResult: any = soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
-                      let argsObj: any = this.makeArgsObj('${functName}'${makeArgObjArgs});
+  return `    public async ${functName}(${wrapperArgString}) : Promise<any> {
+                  let refinedResult = soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
+                      let argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
                       return client['${functName}Async'](argsObj);
-                  }).then((result: any) => {
+                  }).then(result => {
                       return result[0];
                   });
                   return refinedResult;
@@ -52,11 +52,11 @@ export const createFunctTemplate = (
 };
 
 //A string specifying a function for constructing an object from user-provided parameters for use by in SOAP function calls
-export const makeArgsObjTemplate: string = `   private makeArgsObj(functName: string, ...args: any[]): any {
-              const argsObj: any = {};
-              const serviceDesc: any = this.wsdlDesc[Object.keys(this.wsdlDesc)[0]];
-              const collectionOfFunctions: any = serviceDesc[Object.keys(serviceDesc)[0]];
-              let argsDescr: any = collectionOfFunctions[functName];
+export const makeArgsObjTemplate: string = `   private makeArgsObj(functName: string, ...args: any[]) {
+              const argsObj : {[key: string]: any} = {};
+              const serviceDesc = this.wsdlDesc[Object.keys(this.wsdlDesc)[0]];
+              const collectionOfFunctions = serviceDesc[Object.keys(serviceDesc)[0]];
+              let argsDescr = collectionOfFunctions[functName];
   
               Object.keys(argsDescr.input).forEach((element: string, index: number) => {
                   if (element !== 'targetNSAlias' && element !== 'targetNamespace') {
