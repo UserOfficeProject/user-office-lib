@@ -47,10 +47,7 @@ export const createFunctTemplate = (
                           return client['${functName}Async'](argsObj);
                       }).then((result: any) => {
                           return result[0];
-                      }).catch((err: any) => {
-                          console.error(err);
                       });
-  
                       return refinedResult;
                   }\n\n`;
 };
