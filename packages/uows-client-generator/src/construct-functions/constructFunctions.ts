@@ -41,15 +41,14 @@ export const createFunctTemplate = (
   if (argDetails.length > 0) makeArgObjArgs = ', ' + makeArgObjArgs;
 
   return `    public ${functName}(${wrapperArgString}): any {
-                      let refinedResult: any =
-                      soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
-                          let argsObj: any = this.makeArgsObj('${functName}'${makeArgObjArgs});
-                          return client['${functName}Async'](argsObj);
-                      }).then((result: any) => {
-                          return result[0];
-                      });
-                      return refinedResult;
-                  }\n\n`;
+                  let refinedResult: any = soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
+                      let argsObj: any = this.makeArgsObj('${functName}'${makeArgObjArgs});
+                      return client['${functName}Async'](argsObj);
+                  }).then((result: any) => {
+                      return result[0];
+                  });
+                  return refinedResult;
+              }\n\n`;
 };
 
 //A string specifying a function for constructing an object from user-provided parameters for use by in SOAP function calls
