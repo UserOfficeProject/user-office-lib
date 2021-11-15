@@ -41,8 +41,8 @@ export const createFunctTemplate = (
   if (argDetails.length > 0) makeArgObjArgs = ', ' + makeArgObjArgs;
 
   return `    public async ${functName}(${wrapperArgString}) : Promise<any> {
-                  let refinedResult = soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
-                      let argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
+                  const refinedResult = soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
+                      const argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
                       return client['${functName}Async'](argsObj);
                   }).then(result => {
                       return result[0];
@@ -56,11 +56,11 @@ export const makeArgsObjTemplate: string = `   private makeArgsObj(functName: st
               const argsObj : {[key: string]: any} = {};
               const serviceDesc = this.wsdlDesc[Object.keys(this.wsdlDesc)[0]];
               const collectionOfFunctions = serviceDesc[Object.keys(serviceDesc)[0]];
-              let argsDescr = collectionOfFunctions[functName];
+              const argsDescr = collectionOfFunctions[functName];
   
               Object.keys(argsDescr.input).forEach((element: string, index: number) => {
                   if (element !== 'targetNSAlias' && element !== 'targetNamespace') {
-                      let argName: string = element.replace('[]', '');
+                      const argName: string = element.replace('[]', '');
                       argsObj[argName] = args[index];
                   }
               });
