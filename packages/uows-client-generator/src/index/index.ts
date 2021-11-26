@@ -37,6 +37,7 @@ const getArgs = () => {
 const generateCode = (obj: any, wsdl: string, filePath: string): void => {
   fs.writeFileSync(filePath, `
     import * as soap from 'soap';
+    import { logger } from '@esss-swap/duo-logger';
 
     export default class UOWSSoapClient {
       private wsdlUrl: string;

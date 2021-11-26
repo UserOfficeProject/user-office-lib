@@ -46,6 +46,17 @@ export const createFunctTemplate = (
                       return client['${functName}Async'](argsObj);
                   }).then(result => {
                       return result[0];
+                  }).catch(result => {
+                      const response = result?.response;
+                      const exceptionMessage = response?.data?.match("<faultstring>(.*)</faultstring>")[1];
+                      logger.logWarn("A call to the UserOfficeWebService returned an exception: ", {
+                          exceptionMessage: exceptionMessage,
+                          method: '${functName}',
+                          serviceUrl: response?.config?.url,
+                          rawResponse: response?.data
+                      });
+
+                      throw (exceptionMessage) ? exceptionMessage : "Error while calling UserOfficeWebService";
                   });
                   return refinedResult;
               }\n\n`;
