@@ -7,6 +7,7 @@ export enum LEVEL {
   ERROR = 'ERROR',
   EXCEPTION = 'EXCEPTION',
   FATAL = 'FATAL',
+  EVENT = 'EVENT',
 }
 
 class GrayLogLogger implements Logger {
@@ -80,6 +81,13 @@ class GrayLogLogger implements Logger {
       this.logError(message, context || {});
     }
   }
+
+  logEvent(json: string) {
+    this.log.info('EVENT', {
+      levelStr: LEVEL.EVENT,
+      context: json,
+    });
+  }
 }
 
 class ConsoleLogger implements Logger {
@@ -119,6 +127,10 @@ class ConsoleLogger implements Logger {
     }
   }
 
+  logEvent(json: string) {
+    console.log(`[${new Date().toISOString()}] ${LEVEL.EVENT} - ${json}`);
+  }
+
   log(level: LEVEL, message: string, context: Record<string, unknown>) {
     console.log(
       `[${new Date().toISOString()}] ${level} - ${message} \n ${safeStringify(
@@ -138,6 +150,7 @@ export interface Logger {
     exception: unknown,
     context?: Record<string, unknown>
   ): void;
+  logEvent(json: string): void;
 }
 
 class LoggerFactory {
