@@ -1,9 +1,9 @@
 {
-  "name": "@user-office-software/test2",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@user-office-software/uows_client_generator",
+  "version": "2.0.0",
+  "description": "Generates an interface for consuming the User Office Web Service",
   "main": "lib/index/index.js",
-  "author": "",
+  "author": "STFC",
   "license": "ISC",
   "types": "lib/index/index.d.ts",
   "directories": {
