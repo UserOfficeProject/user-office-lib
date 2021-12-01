@@ -7,7 +7,7 @@ Contains resources for localising UO project NB. Currently only British English 
 Install package as normal
 
 ```bash
-npm install @user-office-project/duo-localisation
+npm install @user-office-software/duo-localisation
 ```
 
 ## Publishing
@@ -22,5 +22,5 @@ Check progress of deployment here: https://gitlab.esss.lu.se/swap/duo-packages/d
 After publishing you can update project that depend on this package by running
 
 ```bash
-npm update @user-office-project/duo-localisation
+npm update @user-office-software/duo-localisation
 ```

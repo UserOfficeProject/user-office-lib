@@ -39,7 +39,7 @@ const generateCode = (obj: any, wsdl: string, filePath: string): void => {
     filePath,
     `
     import * as soap from 'soap';
-    import { logger } from '@user-office-project/duo-logger';
+    import { logger } from '@user-office-software/duo-logger';
 
     export default class UOWSSoapClient {
       private wsdlUrl: string;
