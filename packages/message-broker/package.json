@@ -1,5 +1,5 @@
 {
-  "name": "@esss-swap/duo-message-broker",
+  "name": "@user-office-project/duo-message-broker",
   "version": "1.0.8",
   "description": "",
   "author": "SWAP",
@@ -24,7 +24,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@esss-swap/duo-logger": "^1.0.3",
+    "@user-office-project/duo-logger": "^1.0.3",
     "@types/amqplib": "^0.5.13",
     "amqplib": "^0.7.1"
   }

@@ -1,4 +1,4 @@
-import { logger } from '@esss-swap/duo-logger';
+import { logger } from '@user-office-project/duo-logger';
 import amqp, { Connection, Channel, MessageProperties, Options } from 'amqplib';
 
 type Message = {
