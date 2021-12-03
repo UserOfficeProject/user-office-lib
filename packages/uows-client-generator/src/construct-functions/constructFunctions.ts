@@ -40,31 +40,38 @@ export const createFunctTemplate = (
 
   if (argDetails.length > 0) makeArgObjArgs = ', ' + makeArgObjArgs;
 
-  return `    public ${functName}(${wrapperArgString}): any {
-                      let refinedResult: any =
-                      soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
-                          let argsObj: any = this.makeArgsObj('${functName}'${makeArgObjArgs});
-                          return client['${functName}Async'](argsObj);
-                      }).then((result: any) => {
-                          return result[0];
-                      }).catch((err: any) => {
-                          console.error(err);
+  return `    public async ${functName}(${wrapperArgString}) : Promise<any> {
+                  const refinedResult = soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
+                      const argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
+                      return client['${functName}Async'](argsObj);
+                  }).then(result => {
+                      return result[0];
+                  }).catch(result => {
+                      const response = result?.response;
+                      const exceptionMessage = response?.data?.match("<faultstring>(.*)</faultstring>")[1];
+                      logger.logWarn("A call to the UserOfficeWebService returned an exception: ", {
+                          exceptionMessage: exceptionMessage,
+                          method: '${functName}',
+                          serviceUrl: response?.config?.url,
+                          rawResponse: response?.data
                       });
-  
-                      return refinedResult;
-                  }\n\n`;
+
+                      throw (exceptionMessage) ? exceptionMessage : "Error while calling UserOfficeWebService";
+                  });
+                  return refinedResult;
+              }\n\n`;
 };
 
 //A string specifying a function for constructing an object from user-provided parameters for use by in SOAP function calls
-export const makeArgsObjTemplate: string = `   private makeArgsObj(functName: string, ...args: any[]): any {
-              const argsObj: any = {};
-              const serviceDesc: any = this.wsdlDesc[Object.keys(this.wsdlDesc)[0]];
-              const collectionOfFunctions: any = serviceDesc[Object.keys(serviceDesc)[0]];
-              let argsDescr: any = collectionOfFunctions[functName];
+export const makeArgsObjTemplate: string = `   private makeArgsObj(functName: string, ...args: any[]) {
+              const argsObj : {[key: string]: any} = {};
+              const serviceDesc = this.wsdlDesc[Object.keys(this.wsdlDesc)[0]];
+              const collectionOfFunctions = serviceDesc[Object.keys(serviceDesc)[0]];
+              const argsDescr = collectionOfFunctions[functName];
   
               Object.keys(argsDescr.input).forEach((element: string, index: number) => {
                   if (element !== 'targetNSAlias' && element !== 'targetNamespace') {
-                      let argName: string = element.replace('[]', '');
+                      const argName: string = element.replace('[]', '');
                       argsObj[argName] = args[index];
                   }
               });

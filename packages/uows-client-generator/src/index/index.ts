@@ -35,21 +35,21 @@ const getArgs = () => {
 
 //Writes the UOWSSoapInterface.ts file to storage
 const generateCode = (obj: any, wsdl: string, filePath: string): void => {
-  /*eslint quotes: ["error", "single", { "avoidEscape": true }]*/
-  fs.writeFileSync(filePath, "import * as soap from 'soap';\n\n");
-  fs.appendFileSync(filePath, 'export default class UOWSSoapClient {\n\n');
-  fs.appendFileSync(filePath, 'private wsdlUrl: string;\n');
-  fs.appendFileSync(
-    filePath,
-    `private wsdlDesc: any = ${JSON.stringify(wsdlDesc)};\n\n`
-  );
-  fs.appendFileSync(filePath, constructorTemplate(wsdl));
+  fs.writeFileSync(filePath, `
+    import * as soap from 'soap';
+    import { logger } from '@esss-swap/duo-logger';
 
-  Object.keys(obj).forEach((element: string) => {
-    fs.appendFileSync(filePath, obj[element]);
-  });
+    export default class UOWSSoapClient {
+      private wsdlUrl: string;
+      private wsdlDesc: any = ${JSON.stringify(wsdlDesc)};
 
-  fs.appendFileSync(filePath, `${makeArgsObjTemplate}\n}`);
+      ${constructorTemplate(wsdl)}
+
+      ${Object.keys(obj).map(element => obj[element]).join("")}
+
+      ${makeArgsObjTemplate}
+    }
+  `);
 };
 
 //Creates the UOWSService.ts file
