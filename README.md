@@ -8,6 +8,8 @@ To create a new package, you can copy and rename the `.templates/new-package` to
 $ cp -r ./.templates/new-package/ ./packages/__PACKAGE_NAME__
 ```
 
+Name your package in the @user-office-software/... scope
+
 Then you have to update the `name` field `package.json`.
 
 ```json
