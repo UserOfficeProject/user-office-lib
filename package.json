@@ -7,7 +7,7 @@
     "lerna:bootstrap": "lerna bootstrap",
     "lerna:build": "lerna run build",
     "lerna:clean": "lerna clean --yes",
-    "lerna:publish": "lerna publish from-package --yes",
+    "lerna:publish": "lerna publish from-package --yes --no-verify-access",
     "lerna:test": "lerna run test",
     "lerna:link": "lerna link",
     "lerna:prePublish": "npm run clean && npm run lerna:bootstrap && npm run lerna:build",
