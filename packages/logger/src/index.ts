@@ -99,6 +99,12 @@ class ConsoleLogger implements Logger {
     this.log(LEVEL.ERROR, message, context);
   }
 
+  /**
+   *  Logs an exception
+   * @param message  The message to log
+   * @param exception  The exception to log
+   * @param context  The context to log
+   */
   logException(
     message: string,
     exception: unknown,
