@@ -1,6 +1,6 @@
 {
   "name": "@user-office-software/duo-validation",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Duo frontend and backend validation in one place.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -30,11 +30,11 @@
   ],
   "dependencies": {
     "moment": "^2.29.0",
-    "yup": "^0.32.11",
-    "sanitize-html": "^2.6.0"
+    "sanitize-html": "^2.6.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@types/yup": "^0.29.0",
-    "@types/sanitize-html": "^2.3.2"
+    "@types/sanitize-html": "^2.3.2",
+    "@types/yup": "^0.29.0"
   }
 }
