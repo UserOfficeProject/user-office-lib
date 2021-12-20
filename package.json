@@ -19,20 +19,20 @@
   "dependencies": {
     "@types/request": "^2.48.7",
     "@types/sax": "^1.2.3",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.4"
   },
   "devDependencies": {
     "@types/node": "^12.12.55",
-    "@typescript-eslint/eslint-plugin": "^4.32.0",
-    "@typescript-eslint/parser": "^4.32.0",
-    "eslint": "^7.20.0",
-    "eslint-config-prettier": "^8.0.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-prettier": "^4.0.0",
     "husky": "^4.3.8",
-    "lerna": "^3.22.1",
+    "lerna": "^4.0.0",
     "lint-staged": "^10.5.4",
-    "prettier": "^2.2.1"
+    "prettier": "^2.5.1"
   },
   "lint-staged": {
     "**/*.{js,ts}": "npm run lint"
@@ -45,5 +45,9 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/UserOfficeProject/user-office-lib.git"
+  },
+  "engines": {
+    "npm": ">=8.0.0",
+    "node": ">=16.0.0"
   }
 }
