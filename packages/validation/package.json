@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "moment": "^2.29.0",
-    "sanitize-html": "^2.6.0",
+    "sanitize-html": "^2.6.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {
