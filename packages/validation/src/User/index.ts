@@ -12,8 +12,7 @@ export const createUserByEmailInviteValidationSchema = (UserRole: any) =>
     userRole: Yup.string().oneOf(Object.keys(UserRole)).required(),
   });
 
-const phoneRegExp =
-  /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
+const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
 
 const passwordValidationSchema = Yup.string()
   .required(

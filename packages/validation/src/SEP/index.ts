@@ -67,10 +67,11 @@ export const saveSepMeetingDecisionValidationSchema = Yup.object().shape({
   submitted: Yup.bool().nullable(),
 });
 
-export const overwriteSepMeetingDecisionRankingValidationSchema =
-  Yup.object().shape({
+export const overwriteSepMeetingDecisionRankingValidationSchema = Yup.object().shape(
+  {
     proposalPk: Yup.number().required(),
     rankOrder: Yup.number()
       .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
       .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
-  });
+  }
+);

@@ -49,12 +49,13 @@ export const removeScientistFromInstrumentValidationSchema = Yup.object().shape(
   }
 );
 
-export const setAvailabilityTimeOnInstrumentValidationSchema =
-  Yup.object().shape({
+export const setAvailabilityTimeOnInstrumentValidationSchema = Yup.object().shape(
+  {
     callId: Yup.number().required(),
     instrumentId: Yup.number().required(),
     availabilityTime: Yup.number().min(0).required(),
-  });
+  }
+);
 
 export const submitInstrumentValidationSchema = Yup.object().shape({
   callId: Yup.number().required(),
