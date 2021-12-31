@@ -21,14 +21,13 @@ const firstStepCreateCallValidationSchema = Yup.object().shape({
   proposalWorkflowId: Yup.number().required(),
 });
 
-const firstStepUpdateCallValidationSchema =
-  firstStepCreateCallValidationSchema.concat(
-    Yup.object()
-      .shape({
-        id: Yup.number().required('Id is required'),
-      })
-      .required()
-  );
+const firstStepUpdateCallValidationSchema = firstStepCreateCallValidationSchema.concat(
+  Yup.object()
+    .shape({
+      id: Yup.number().required('Id is required'),
+    })
+    .required()
+);
 
 const secondStepCallValidationSchema = Yup.object().shape({
   startReview: Yup.date().required('Start review date is required'),
@@ -124,8 +123,9 @@ export const assignInstrumentsToCallValidationSchema = Yup.object().shape({
     .min(1),
 });
 
-export const removeAssignedInstrumentFromCallValidationSchema =
-  Yup.object().shape({
+export const removeAssignedInstrumentFromCallValidationSchema = Yup.object().shape(
+  {
     callId: Yup.number().required('callId is required'),
     instrumentId: Yup.number().required('instrumentId is required'),
-  });
+  }
+);

@@ -42,21 +42,23 @@ export const deleteQuestionValidationSchema = Yup.object().shape({
   questionId: Yup.string().required(),
 });
 
-export const updateQuestionTemplateRelationValidationSchema =
-  Yup.object().shape({
+export const updateQuestionTemplateRelationValidationSchema = Yup.object().shape(
+  {
     questionId: Yup.string().required(),
     templateId: Yup.number().required(),
     topicId: Yup.number().notRequired(),
     sortOrder: Yup.number().notRequired(),
     config: Yup.string().notRequired(),
     dependency: Yup.object().nullable().notRequired(),
-  });
+  }
+);
 
-export const deleteQuestionTemplateRelationValidationSchema =
-  Yup.object().shape({
+export const deleteQuestionTemplateRelationValidationSchema = Yup.object().shape(
+  {
     questionId: Yup.string().required(),
     templateId: Yup.number().required(),
-  });
+  }
+);
 
 export const updateTopicOrderValidationSchema = Yup.object().shape({
   topicOrder: Yup.array().of(Yup.number()),
@@ -75,10 +77,11 @@ export const updateTemplateValidationSchema = Yup.object().shape({
   isArchived: Yup.bool().notRequired(),
 });
 
-export const createQuestionTemplateRelationValidationSchema =
-  Yup.object().shape({
+export const createQuestionTemplateRelationValidationSchema = Yup.object().shape(
+  {
     templateId: Yup.number().required(),
     questionId: Yup.string().required(),
     sortOrder: Yup.number().required(),
     topicId: Yup.number().required(),
-  });
+  }
+);
