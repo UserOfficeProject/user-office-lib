@@ -4,8 +4,8 @@ import { Logger } from './loggers/Logger';
 const deaultLogger = new ConsoleLogger();
 let logger: Logger = deaultLogger;
 
-export function setLogger(newLogger: Logger) {
+function setLogger(newLogger: Logger) {
   logger = newLogger;
 }
 
-export { logger };
+export { logger, setLogger };
