@@ -12,7 +12,7 @@ Comes with these out of the box implementations:
 Use the package manager [npm](https://www.npmjs.com/package/@user-office-software/duo-validation) to install duo-logger.
 
 ```bash
-pip install @user-office-software/duo-validation
+npm install @user-office-software/duo-validation
 ```
 
 ## Usage
