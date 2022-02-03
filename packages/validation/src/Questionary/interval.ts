@@ -15,7 +15,7 @@ export const intervalQuestionValidationSchema = (field: any) => {
     maxSchema = maxSchema.required('This is a required field');
   }
 
-  let unitSchema = Yup.string().nullable();
+  let unitSchema = Yup.object().nullable();
 
   // available units are specified and the field is required
   if (config.units?.length && config.required) {

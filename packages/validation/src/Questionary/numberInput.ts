@@ -22,7 +22,7 @@ export const numberInputQuestionValidationSchema = (
     valueScheme = valueScheme.positive('Value must be a positive number');
   }
 
-  let unitScheme = Yup.string().nullable();
+  let unitScheme = Yup.object().nullable();
 
   // available units are specified and the field is required
   if (config.units?.length && config.required) {
