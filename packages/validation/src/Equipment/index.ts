@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import * as Yup from 'yup';
 
 import {
@@ -28,9 +28,11 @@ export const equipmentValidationSchema = Yup.object().shape({
           return schema;
         }
 
-        const min = moment(maintenanceStartsAt).add(1, 'minute');
+        const min = DateTime.fromJSDate(maintenanceStartsAt).plus({
+          minute: 1,
+        });
 
-        if (!min.isValid()) {
+        if (!min.isValid) {
           return schema;
         }
 
@@ -38,8 +40,8 @@ export const equipmentValidationSchema = Yup.object().shape({
           .nullable()
           .typeError(TYPE_ERR_INVALID_DATE)
           .min(
-            min.toDate(),
-            atOrLaterThanMsg(min.format(TZ_LESS_DATE_TIME_FORMAT))
+            min.toJSDate(),
+            atOrLaterThanMsg(min.toFormat(TZ_LESS_DATE_TIME_FORMAT))
           )
           .notRequired();
       }
