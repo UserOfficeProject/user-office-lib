@@ -6,9 +6,9 @@ export const intervalQuestionValidationSchema = (field: any) => {
   let minSchema = Yup.number().transform((value) =>
     isNaN(value) ? undefined : value
   );
-  let maxSchema = Yup.number().transform((value) =>
-    isNaN(value) ? undefined : value
-  );
+  let maxSchema = Yup.number()
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .moreThan(Yup.ref('min'), 'Max must be greater than min');
 
   if (config.required) {
     minSchema = minSchema.required('This is a required field');
