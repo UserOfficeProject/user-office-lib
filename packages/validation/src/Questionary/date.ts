@@ -2,11 +2,12 @@ import { DateTime } from 'luxon';
 import * as Yup from 'yup';
 
 function normalizeDate(date: string, includeTime: boolean) {
-  const normalizedDate = DateTime.fromISO(date);
+  let normalizedDate = DateTime.fromISO(date);
+
   if (includeTime) {
-    normalizedDate.startOf('minute');
+    normalizedDate = normalizedDate.startOf('minute');
   } else {
-    normalizedDate.startOf('day');
+    normalizedDate = normalizedDate.startOf('day');
   }
 
   return normalizedDate.toJSDate();
