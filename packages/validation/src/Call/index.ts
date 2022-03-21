@@ -1,14 +1,18 @@
+import { DateTime } from 'luxon';
 import * as Yup from 'yup';
 
-import { isValidDate } from '../util';
+import { TYPE_ERR_INVALID_DATE, TYPE_ERR_INVALID_DATE_TIME } from '../util';
 
 const firstStepCreateCallValidationSchema = Yup.object().shape({
   shortCode: Yup.string().required('Short Code is required'),
-  startCall: Yup.date().required('Start call date is required'),
+  startCall: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE_TIME)
+    .required('Start call date is required'),
   endCall: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE_TIME)
     .required('End call date is required')
     .when('startCall', (startCall: Date, schema: Yup.DateSchema) => {
-      if (!isValidDate(startCall)) {
+      if (!DateTime.fromJSDate(startCall).isValid) {
         return schema;
       }
 
@@ -31,11 +35,14 @@ const firstStepUpdateCallValidationSchema =
   );
 
 const secondStepCallValidationSchema = Yup.object().shape({
-  startReview: Yup.date().required('Start review date is required'),
+  startReview: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE)
+    .required('Start review date is required'),
   endReview: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE)
     .required('End review date is required')
     .when('startReview', (startReview: Date, schema: Yup.DateSchema) => {
-      if (!isValidDate(startReview)) {
+      if (!DateTime.fromJSDate(startReview).isValid) {
         return schema;
       }
 
@@ -44,8 +51,12 @@ const secondStepCallValidationSchema = Yup.object().shape({
         'End review date can not be before start review date.'
       );
     }),
-  startSEPReview: Yup.date().nullable().notRequired(),
+  startSEPReview: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE)
+    .nullable()
+    .notRequired(),
   endSEPReview: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE)
     .nullable()
     .notRequired()
     .when(
@@ -58,7 +69,7 @@ const secondStepCallValidationSchema = Yup.object().shape({
           Date | null | undefined
         >
       ) => {
-        if (!isValidDate(startSEPReview)) {
+        if (!DateTime.fromJSDate(startSEPReview).isValid) {
           return schema;
         }
 
@@ -74,11 +85,14 @@ const secondStepCallValidationSchema = Yup.object().shape({
 });
 
 const thirdStepCallValidationSchema = Yup.object().shape({
-  startNotify: Yup.date().required('Start notify date is required'),
+  startNotify: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE)
+    .required('Start notify date is required'),
   endNotify: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE)
     .required('End notify date is required')
     .when('startNotify', (startNotify: Date, schema: Yup.DateSchema) => {
-      if (!isValidDate(startNotify)) {
+      if (!DateTime.fromJSDate(startNotify).isValid) {
         return schema;
       }
 
@@ -87,11 +101,14 @@ const thirdStepCallValidationSchema = Yup.object().shape({
         'End notify date can not be before start notify date.'
       );
     }),
-  startCycle: Yup.date().required('Start cycle date is required'),
+  startCycle: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE)
+    .required('Start cycle date is required'),
   endCycle: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE)
     .required('End cycle date is required')
     .when('startCycle', (startCycle: Date, schema: Yup.DateSchema) => {
-      if (!isValidDate(startCycle)) {
+      if (!DateTime.fromJSDate(startCycle).isValid) {
         return schema;
       }
 
