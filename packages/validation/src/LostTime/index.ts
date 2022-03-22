@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import * as Yup from 'yup';
 
 import {
@@ -18,11 +18,11 @@ export const bulkUpsertLostTimeValidationSchema = Yup.object().shape({
         endsAt: Yup.date()
           .typeError(TYPE_ERR_INVALID_DATE)
           .when('startsAt', (startsAt: Date) => {
-            const min = moment(startsAt).add(1, 'minute');
+            const min = DateTime.fromJSDate(startsAt).plus({ minute: 1 });
 
             return Yup.date().min(
-              min.toDate(),
-              atOrLaterThanMsg(min.format(TZ_LESS_DATE_TIME_FORMAT))
+              min.toJSDate(),
+              atOrLaterThanMsg(min.toFormat(TZ_LESS_DATE_TIME_FORMAT))
             );
           })
           .required(),
