@@ -1,7 +1,10 @@
-import { DateTime } from 'luxon';
 import * as Yup from 'yup';
 
-import { TYPE_ERR_INVALID_DATE, TYPE_ERR_INVALID_DATE_TIME } from '../util';
+import {
+  isValidDate,
+  TYPE_ERR_INVALID_DATE,
+  TYPE_ERR_INVALID_DATE_TIME,
+} from '../util';
 
 const firstStepCreateCallValidationSchema = Yup.object().shape({
   shortCode: Yup.string().required('Short Code is required'),
@@ -12,7 +15,7 @@ const firstStepCreateCallValidationSchema = Yup.object().shape({
     .typeError(TYPE_ERR_INVALID_DATE_TIME)
     .required('End call date is required')
     .when('startCall', (startCall: Date, schema: Yup.DateSchema) => {
-      if (!DateTime.fromJSDate(startCall).isValid) {
+      if (!isValidDate(startCall)) {
         return schema;
       }
 
@@ -42,7 +45,7 @@ const secondStepCallValidationSchema = Yup.object().shape({
     .typeError(TYPE_ERR_INVALID_DATE)
     .required('End review date is required')
     .when('startReview', (startReview: Date, schema: Yup.DateSchema) => {
-      if (!DateTime.fromJSDate(startReview).isValid) {
+      if (!isValidDate(startReview)) {
         return schema;
       }
 
@@ -69,7 +72,7 @@ const secondStepCallValidationSchema = Yup.object().shape({
           Date | null | undefined
         >
       ) => {
-        if (!DateTime.fromJSDate(startSEPReview).isValid) {
+        if (!isValidDate(startSEPReview)) {
           return schema;
         }
 
@@ -92,7 +95,7 @@ const thirdStepCallValidationSchema = Yup.object().shape({
     .typeError(TYPE_ERR_INVALID_DATE)
     .required('End notify date is required')
     .when('startNotify', (startNotify: Date, schema: Yup.DateSchema) => {
-      if (!DateTime.fromJSDate(startNotify).isValid) {
+      if (!isValidDate(startNotify)) {
         return schema;
       }
 
@@ -108,7 +111,7 @@ const thirdStepCallValidationSchema = Yup.object().shape({
     .typeError(TYPE_ERR_INVALID_DATE)
     .required('End cycle date is required')
     .when('startCycle', (startCycle: Date, schema: Yup.DateSchema) => {
-      if (!DateTime.fromJSDate(startCycle).isValid) {
+      if (!isValidDate(startCycle)) {
         return schema;
       }
 

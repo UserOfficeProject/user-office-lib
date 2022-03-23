@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import * as Yup from 'yup';
 
 export const TZ_LESS_DATE_TIME_FORMAT = 'yyyy-MM-DD HH:mm:ss';
@@ -29,3 +30,5 @@ export const NumericalID = ID.matches(
   /^[\d]+$/,
   'Invalid NumericalID'
 ).typeError('Invalid NumericalID');
+
+export const isValidDate = (d: Date) => DateTime.fromJSDate(d).isValid;
