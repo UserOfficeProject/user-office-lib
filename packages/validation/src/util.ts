@@ -1,8 +1,10 @@
+import { DateTime } from 'luxon';
 import * as Yup from 'yup';
 
 export const TZ_LESS_DATE_TIME_FORMAT = 'yyyy-MM-DD HH:mm:ss';
 
 export const TYPE_ERR_INVALID_DATE = 'Invalid Date Format';
+export const TYPE_ERR_INVALID_DATE_TIME = 'Invalid DateTime Format';
 
 export const minCharactersMsg = ({ min }: { min: number }) =>
   `Must be at least ${min} characters`;
@@ -29,5 +31,4 @@ export const NumericalID = ID.matches(
   'Invalid NumericalID'
 ).typeError('Invalid NumericalID');
 
-export const isValidDate = (d: Date) =>
-  d instanceof Date && !isNaN(d.getTime());
+export const isValidDate = (d: Date) => DateTime.fromJSDate(d).isValid;
