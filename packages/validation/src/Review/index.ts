@@ -26,3 +26,8 @@ export const addUserForReviewValidationSchema = Yup.object().shape({
   userID: Yup.number().required(),
   proposalPk: Yup.number().required(),
 });
+
+export const submitProposalReviewValidationSchema = Yup.object().shape({
+  proposalPk: Yup.number().required('Proposal Primary Key is required'),
+  reviewId: Yup.number().required('Review ID is required'),
+});
