@@ -1,6 +1,6 @@
 {
   "name": "@user-office-software/duo-validation",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Duo frontend and backend validation in one place.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -37,5 +37,9 @@
     "@types/luxon": "^2.3.0",
     "@types/sanitize-html": "^2.3.2",
     "@types/yup": "^0.29.0"
+  },
+  "engines": {
+    "npm": ">=8.5.0",
+    "node": ">=16.14.0"
   }
 }
