@@ -4,7 +4,8 @@ export const proposalGradeValidationSchema = Yup.object().shape({
   comment: Yup.string().max(1000, 'Too long comment').required(),
   grade: Yup.number()
     .min(0, 'Lowest grade is 0')
-    .max(10, 'Highest grade is 10'),
+    .max(10, 'Highest grade is 10')
+    .required(),
 });
 
 export const proposalTechnicalReviewValidationSchema = Yup.object().shape({
