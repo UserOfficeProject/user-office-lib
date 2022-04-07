@@ -9,11 +9,11 @@ export const proposalGradeValidationSchema = Yup.object().shape({
 });
 
 export const proposalTechnicalReviewValidationSchema = Yup.object().shape({
-  status: Yup.string().nullable(),
+  status: Yup.string().required(),
   timeAllocation: Yup.number()
     .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
     .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
-    .nullable(),
+    .required('Time allocation is required'),
   comment: Yup.string().nullable(),
   publicComment: Yup.string().nullable(),
 });
