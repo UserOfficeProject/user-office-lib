@@ -47,7 +47,7 @@
     "url": "git://github.com/UserOfficeProject/user-office-lib.git"
   },
   "engines": {
-    "npm": ">=8.5.0",
+    "npm": ">=8.3.1",
     "node": ">=16.14.0"
   }
 }
