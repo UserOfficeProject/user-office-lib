@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
 export const proposalGradeValidationSchema = Yup.object().shape({
-  comment: Yup.string().max(1000, 'Too long comment').required(),
+  comment: Yup.string().required(),
   grade: Yup.number()
     .min(1, 'Lowest grade is 1')
     .max(10, 'Highest grade is 10')
