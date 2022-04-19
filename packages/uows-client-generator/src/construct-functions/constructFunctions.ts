@@ -41,7 +41,7 @@ export const createFunctTemplate = (
   if (argDetails.length > 0) makeArgObjArgs = ', ' + makeArgObjArgs;
 
   return `    public async ${functName}(${wrapperArgString}) : Promise<any> {
-                  const refinedResult = soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
+                  const refinedResult = soap.createClientAsync(this.wsdlUrl, {}, this.endpoint).then((client: soap.Client) => {
                       const argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
                       return client['${functName}Async'](argsObj);
                   }).then(result => {
@@ -79,11 +79,13 @@ export const makeArgsObjTemplate: string = `   private makeArgsObj(functName: st
           }\n\n`;
 
 //A string specifying the constructor for the UOWSSoapInterface class
-export const constructorTemplate = (wsdl: string) => {
-  return `   public constructor(wsdlUrl?: string) {
+export const constructorTemplate = (wsdl: string, endpoint: string) => {
+  return `   public constructor(wsdlUrl?: string, endpoint?: string) {
               if(wsdlUrl == null)
                   this.wsdlUrl = '${wsdl}';
+                  this.endpoint = '${endpoint}';
               else
                   this.wsdlUrl = wsdlUrl;
+                  this.endpoint = '${endpoint}';
           }\n\n`;
 };
