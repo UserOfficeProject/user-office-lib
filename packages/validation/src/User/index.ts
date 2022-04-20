@@ -37,6 +37,15 @@ export const createUserValidationSchema = Yup.object().shape({
   user_title: Yup.string().required(),
   email: Yup.string().email().required(),
   password: passwordValidationSchema,
+  confirmPassword: Yup.string()
+    .when('password', {
+      is: (val: string) => (val && val.length > 0 ? true : false),
+      then: Yup.string().oneOf(
+        [Yup.ref('password')],
+        'Confirm password does not match password'
+      ),
+    })
+    .notRequired(),
   birthdate: Yup.date()
     .min(new Date(1900, 1, 1), 'You are not that old')
     .test('DOB', 'You must be at least 18 years old', (value) => {
@@ -142,7 +151,7 @@ export const addUserRoleValidationSchema = Yup.object().shape({
 
 export const updatePasswordValidationSchema = Yup.object().shape({
   id: Yup.number().required(),
-  password: Yup.string().required(),
+  password: passwordValidationSchema,
 });
 
 export const userPasswordFieldBEValidationSchema = Yup.object().shape({
@@ -153,9 +162,12 @@ export const userPasswordFieldBEValidationSchema = Yup.object().shape({
 export const userPasswordFieldValidationSchema = Yup.object().shape({
   password: passwordValidationSchema,
   confirmPassword: Yup.string()
-    .required()
-    .label('Confirm password')
-    .test('passwords-match', 'Passwords must match', function (value) {
-      return this.parent.password === value;
-    }),
+    .when('password', {
+      is: (val: string) => (val && val.length > 0 ? true : false),
+      then: Yup.string().oneOf(
+        [Yup.ref('password')],
+        'Confirm password does not match password'
+      ),
+    })
+    .notRequired(),
 });
