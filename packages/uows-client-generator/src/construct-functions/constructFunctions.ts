@@ -41,12 +41,10 @@ export const createFunctTemplate = (
   if (argDetails.length > 0) makeArgObjArgs = ', ' + makeArgObjArgs;
 
   return `    public async ${functName}(${wrapperArgString}) : Promise<any> {
-                  const refinedResult = soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
-                      const argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
-                      return client['${functName}Async'](argsObj);
-                  }).then(result => {
+                  const argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
+                  const refinedResult = this.client['${functName}Async'](argsObj).then((result: any) => {
                       return result[0];
-                  }).catch(result => {
+                  }).catch((result: any) => {
                       const response = result?.response;
                       const exceptionMessage = response?.data?.match("<faultstring>(.*)</faultstring>")[1];
                       logger.logWarn("A call to the UserOfficeWebService returned an exception: ", {
@@ -85,5 +83,12 @@ export const constructorTemplate = (wsdl: string) => {
                   this.wsdlUrl = '${wsdl}';
               else
                   this.wsdlUrl = wsdlUrl;
+
+              soap.createClient(this.wsdlUrl, (error, client) => {
+                if (error) {
+                  logger.logError('An error occurred while creating the UOWS client', {error: error});
+                }
+                this.client = client
+              });
           }\n\n`;
 };
