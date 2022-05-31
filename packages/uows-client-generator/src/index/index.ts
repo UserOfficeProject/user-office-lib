@@ -40,10 +40,12 @@ const generateCode = (obj: any, wsdl: string, filePath: string): void => {
     `
     import * as soap from 'soap';
     import { logger } from '@user-office-software/duo-logger';
+    import { createHash } from 'crypto';
 
     export default class UOWSSoapClient {
       private wsdlUrl: string;
       private client!: soap.Client;
+      private activeUowsRequests: Record<string, Promise<any>> = {};
       private wsdlDesc: any = ${JSON.stringify(wsdlDesc)};
 
       ${constructorTemplate(wsdl)}

@@ -42,7 +42,15 @@ export const createFunctTemplate = (
 
   return `    public async ${functName}(${wrapperArgString}) : Promise<any> {
                   const argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
+                  const requestId = createHash('sha1').update('${functName}' + JSON.stringify(argsObj)).digest('base64');
+
+                  const activeUowsRequest = this.activeUowsRequests[requestId];
+                  if (activeUowsRequest) {
+                    return activeUowsRequest;
+                  }
+
                   const refinedResult = this.client['${functName}Async'](argsObj).then((result: any) => {
+                      delete this.activeUowsRequests[requestId];
                       return result[0];
                   }).catch((result: any) => {
                       const response = result?.response;
@@ -56,6 +64,8 @@ export const createFunctTemplate = (
 
                       throw (exceptionMessage) ? exceptionMessage : "Error while calling UserOfficeWebService";
                   });
+                  this.activeUowsRequests[requestId] = refinedResult;
+
                   return refinedResult;
               }\n\n`;
 };
