@@ -45,7 +45,7 @@ const generateCode = (obj: any, wsdl: string, filePath: string): void => {
     export default class UOWSSoapClient {
       private wsdlUrl: string;
       private client!: soap.Client;
-      private activeUowsRequests: Record<string, Promise<any>> = {};
+      private activeUowsRequests: Map<string, Promise<any>> = new Map();
       private wsdlDesc: any = ${JSON.stringify(wsdlDesc)};
 
       ${constructorTemplate(wsdl)}

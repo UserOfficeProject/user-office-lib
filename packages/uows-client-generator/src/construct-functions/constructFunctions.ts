@@ -44,7 +44,7 @@ export const createFunctTemplate = (
                   const argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
                   const requestId = createHash('sha1').update('${functName}' + JSON.stringify(argsObj)).digest('base64');
 
-                  const activeUowsRequest = this.activeUowsRequests[requestId];
+                  const activeUowsRequest = this.activeUowsRequests.get(requestId);
                   if (activeUowsRequest) {
                     return activeUowsRequest;
                   }
@@ -63,9 +63,9 @@ export const createFunctTemplate = (
 
                       throw (exceptionMessage) ? exceptionMessage : "Error while calling UserOfficeWebService";
                   }).finally(() => {
-                    delete this.activeUowsRequests[requestId];
+                    this.activeUowsRequests.delete(requestId);
                   });
-                  this.activeUowsRequests[requestId] = refinedResult;
+                  this.activeUowsRequests.set(requestId, refinedResult);
 
                   return refinedResult;
               }\n\n`;
