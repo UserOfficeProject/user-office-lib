@@ -50,6 +50,19 @@ const generateCode = (obj: any, wsdl: string, filePath: string): void => {
 
       ${constructorTemplate(wsdl)}
 
+      private setClient() {
+        logger.logInfo('Attempting to create UOWS client', {});
+        soap.createClient(this.wsdlUrl, (error, client) => {
+          if (error) {
+            logger.logError('An error occurred while creating the UOWS client', {error: error});
+            setTimeout(() => { this.setClient() }, 10000);
+            return;
+          }
+          logger.logInfo('Created UOWS client', {});
+          this.client = client
+        });
+      }
+
       ${Object.keys(obj)
         .map((element) => obj[element])
         .join('')}
