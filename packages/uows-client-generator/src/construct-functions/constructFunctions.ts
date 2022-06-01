@@ -50,7 +50,6 @@ export const createFunctTemplate = (
                   }
 
                   const refinedResult = this.client['${functName}Async'](argsObj).then((result: any) => {
-                      delete this.activeUowsRequests[requestId];
                       return result[0];
                   }).catch((result: any) => {
                       const response = result?.response;
@@ -63,6 +62,8 @@ export const createFunctTemplate = (
                       });
 
                       throw (exceptionMessage) ? exceptionMessage : "Error while calling UserOfficeWebService";
+                  }).finally(() => {
+                    delete this.activeUowsRequests[requestId];
                   });
                   this.activeUowsRequests[requestId] = refinedResult;
 
