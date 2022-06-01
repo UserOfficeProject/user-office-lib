@@ -95,11 +95,6 @@ export const constructorTemplate = (wsdl: string) => {
               else
                   this.wsdlUrl = wsdlUrl;
 
-              soap.createClient(this.wsdlUrl, (error, client) => {
-                if (error) {
-                  logger.logError('An error occurred while creating the UOWS client', {error: error});
-                }
-                this.client = client
-              });
+              this.setClient();
           }\n\n`;
 };
