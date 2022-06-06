@@ -41,12 +41,17 @@ export const createFunctTemplate = (
   if (argDetails.length > 0) makeArgObjArgs = ', ' + makeArgObjArgs;
 
   return `    public async ${functName}(${wrapperArgString}) : Promise<any> {
-                  const refinedResult = soap.createClientAsync(this.wsdlUrl).then((client: soap.Client) => {
-                      const argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
-                      return client['${functName}Async'](argsObj);
-                  }).then(result => {
+                  const argsObj = this.makeArgsObj('${functName}'${makeArgObjArgs});
+                  const requestId = createHash('sha1').update('${functName}' + JSON.stringify(argsObj)).digest('base64');
+
+                  const activeUowsRequest = this.activeUowsRequests.get(requestId);
+                  if (activeUowsRequest) {
+                    return activeUowsRequest;
+                  }
+
+                  const refinedResult = this.client['${functName}Async'](argsObj).then((result: any) => {
                       return result[0];
-                  }).catch(result => {
+                  }).catch((result: any) => {
                       const response = result?.response;
                       const exceptionMessage = response?.data?.match("<faultstring>(.*)</faultstring>")[1];
                       logger.logWarn("A call to the UserOfficeWebService returned an exception: ", {
@@ -57,7 +62,11 @@ export const createFunctTemplate = (
                       });
 
                       throw (exceptionMessage) ? exceptionMessage : "Error while calling UserOfficeWebService";
+                  }).finally(() => {
+                    this.activeUowsRequests.delete(requestId);
                   });
+                  this.activeUowsRequests.set(requestId, refinedResult);
+
                   return refinedResult;
               }\n\n`;
 };
@@ -85,5 +94,7 @@ export const constructorTemplate = (wsdl: string) => {
                   this.wsdlUrl = '${wsdl}';
               else
                   this.wsdlUrl = wsdlUrl;
+
+              this.setClient();
           }\n\n`;
 };

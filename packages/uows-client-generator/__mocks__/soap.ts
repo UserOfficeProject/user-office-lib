@@ -1,6 +1,6 @@
 const soap: any = {};
 
-const serviceMock: any = {
+const serviceMock = {
   getAgeRangeOptionsAsync: async function () {
     return new Promise<any>((resolve) => {
       resolve(['1-99']);
@@ -13,12 +13,11 @@ const serviceMock: any = {
   },
 };
 
-const createClientAsync = async (): Promise<any> => {
-  return new Promise<any>((resolve) => {
-    resolve(serviceMock);
-  });
+soap.createClient = (
+  url: string,
+  callback: (error: any, client: any) => void
+) => {
+  callback(null, serviceMock);
 };
-
-soap.createClientAsync = createClientAsync;
 
 module.exports = soap;

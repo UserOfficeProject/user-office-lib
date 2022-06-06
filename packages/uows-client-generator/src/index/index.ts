@@ -40,12 +40,28 @@ const generateCode = (obj: any, wsdl: string, filePath: string): void => {
     `
     import * as soap from 'soap';
     import { logger } from '@user-office-software/duo-logger';
+    import { createHash } from 'crypto';
 
     export default class UOWSSoapClient {
       private wsdlUrl: string;
+      private client!: soap.Client;
+      private activeUowsRequests: Map<string, Promise<any>> = new Map();
       private wsdlDesc: any = ${JSON.stringify(wsdlDesc)};
 
       ${constructorTemplate(wsdl)}
+
+      private setClient() {
+        logger.logInfo('Attempting to create UOWS client', {});
+        soap.createClient(this.wsdlUrl, (error, client) => {
+          if (error) {
+            logger.logError('An error occurred while creating the UOWS client', {error: error});
+            setTimeout(() => { this.setClient() }, 10000);
+            return;
+          }
+          logger.logInfo('Created UOWS client', {});
+          this.client = client
+        });
+      }
 
       ${Object.keys(obj)
         .map((element) => obj[element])
