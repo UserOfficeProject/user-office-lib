@@ -89,7 +89,7 @@ export const makeArgsObjTemplate: string = `   private makeArgsObj(functName: st
 
 //A string specifying the constructor for the UOWSSoapInterface class
 export const constructorTemplate = (wsdl: string) => {
-  return `   public constructor(wsdlUrl?: string) {
+  return `   private constructor(wsdlUrl?: string) {
               if(wsdlUrl == null)
                   this.wsdlUrl = '${wsdl}';
               else
