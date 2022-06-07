@@ -43,10 +43,19 @@ const generateCode = (obj: any, wsdl: string, filePath: string): void => {
     import { createHash } from 'crypto';
 
     export default class UOWSSoapClient {
+      private static instance: UOWSSoapClient | undefined = undefined;
       private wsdlUrl: string;
       private client!: soap.Client;
       private activeUowsRequests: Map<string, Promise<any>> = new Map();
       private wsdlDesc: any = ${JSON.stringify(wsdlDesc)};
+
+      static getInstance(): UOWSSoapClient {
+        if (!this.instance) {
+          this.instance = new UOWSSoapClient(process.env.EXTERNAL_AUTH_SERVICE_URL);
+        }
+
+        return this.instance;
+      }
 
       ${constructorTemplate(wsdl)}
 
