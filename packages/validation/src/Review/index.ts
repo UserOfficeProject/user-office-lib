@@ -1,7 +1,27 @@
 import * as Yup from 'yup';
 
+import {
+  sanitizeHtmlAndCleanText,
+  SEP_REVIEW_COMMENT_CHAR_LIMIT,
+} from '../util';
+
+const proposalSEPReviewCommentValidationSchema = () => {
+  let schema = Yup.string().transform(function (value: string) {
+    return sanitizeHtmlAndCleanText(value);
+  });
+
+  schema = schema
+    .max(
+      SEP_REVIEW_COMMENT_CHAR_LIMIT,
+      `Comment must be at most ${SEP_REVIEW_COMMENT_CHAR_LIMIT} characters`
+    )
+    .required();
+
+  return schema;
+};
+
 export const proposalGradeValidationSchema = Yup.object().shape({
-  comment: Yup.string().required(),
+  comment: proposalSEPReviewCommentValidationSchema(),
   grade: Yup.number()
     .min(1, 'Lowest grade is 1')
     .max(10, 'Highest grade is 10')
