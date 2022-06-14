@@ -8,10 +8,11 @@ type Message = {
 };
 
 export enum Queue {
-  PROPOSAL = 'PROPOSAL',
-  SCHEDULING_PROPOSAL = 'SCHEDULING_PROPOSAL',
-  SCHEDULED_EVENTS = 'SCHEDULED_EVENTS',
   BROADCAST = 'useroffice.fanout',
+  PROPOSAL = 'PROPOSAL',
+  SCHEDULED_EVENTS = 'SCHEDULED_EVENTS',
+  SCHEDULING_PROPOSAL = 'SCHEDULING_PROPOSAL',
+  VISA = 'VISA',
 }
 
 export type ConsumerCallback = (
