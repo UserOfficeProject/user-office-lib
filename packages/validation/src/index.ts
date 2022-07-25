@@ -5,6 +5,7 @@ export * from './ProposalStatuses';
 export * from './ProposalWorkflow';
 export * from './Review';
 export * from './SEP';
+export * from './PredefinedMessage';
 export * from './Template';
 export * from './User';
 export * from './Instrument';
