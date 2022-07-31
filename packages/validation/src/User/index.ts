@@ -25,9 +25,6 @@ const passwordValidationSchema = Yup.string()
   );
 
 export const createUserValidationSchema = Yup.object().shape({
-  orcid: Yup.string().required(),
-  orcidHash: Yup.string().required(),
-  refreshToken: Yup.string().required(),
   firstname: Yup.string().required().min(2).max(50),
   middlename: Yup.string().notRequired().max(50),
   preferredname: Yup.string().notRequired().max(50),
