@@ -38,9 +38,7 @@ export class OpenIdClient {
    * @throws {Error} If if the environment variables are not set
    * @throws {Error} If discovery service fails to get the issuer
    */
-  public async authorize(code: string) {
-    const { redirectUrl } = OpenIdClient.getConfig(); // URL that the user is redirected back to after login
-
+  public async authorize(code: string, redirectUrl: string) {
     /**
      * @description Requesting Authorization server to exchange the code for a tokenset
      * and validating the return value that it has both - access_token and id_token
