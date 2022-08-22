@@ -29,8 +29,8 @@
     "lib"
   ],
   "dependencies": {
-    "luxon": "^2.4.0",
-    "sanitize-html": "^2.7.0",
+    "luxon": "^2.5.0",
+    "sanitize-html": "^2.7.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {
