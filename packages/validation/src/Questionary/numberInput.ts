@@ -14,12 +14,26 @@ export const numberInputQuestionValidationSchema = (
     valueScheme = valueScheme.required('This is a required field');
   }
 
-  if (config.numberValueConstraint === NumberValueConstraint.ONLY_NEGATIVE) {
-    valueScheme = valueScheme.negative('Value must be a negative number');
-  }
+  switch (config.numberValueConstraint) {
+    case NumberValueConstraint.ONLY_NEGATIVE:
+      valueScheme = valueScheme.negative('Value must be a negative number');
+      break;
 
-  if (config.numberValueConstraint === NumberValueConstraint.ONLY_POSITIVE) {
-    valueScheme = valueScheme.positive('Value must be a positive number');
+    case NumberValueConstraint.ONLY_POSITIVE:
+      valueScheme = valueScheme.positive('Value must be a positive number');
+      break;
+
+    case NumberValueConstraint.ONLY_NEGATIVE_INTEGER:
+      valueScheme = valueScheme
+        .integer('Value must be negative whole number')
+        .negative('Value must be negative whole number');
+      break;
+
+    case NumberValueConstraint.ONLY_POSITIVE_INTEGER:
+      valueScheme = valueScheme
+        .integer('Value must be positive whole number')
+        .positive('Value must be a positive whole number');
+      break;
   }
 
   let unitScheme = Yup.object().nullable();
