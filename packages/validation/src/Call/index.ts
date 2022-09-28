@@ -24,6 +24,18 @@ const firstStepCreateCallValidationSchema = Yup.object().shape({
         'End call date can not be before start call date.'
       );
     }),
+  endCallInternal: Yup.date()
+    .typeError(TYPE_ERR_INVALID_DATE_TIME)
+    .when('endCall', (endCall: Date, schema: Yup.DateSchema) => {
+      if (!isValidDate(endCall)) {
+        return schema;
+      }
+
+      return schema.min(
+        endCall,
+        'Internal call end date can not be before  call end date.'
+      );
+    }),
   templateId: Yup.number().required(),
   proposalWorkflowId: Yup.number().required(),
 });
