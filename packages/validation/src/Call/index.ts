@@ -33,7 +33,7 @@ const firstStepCreateCallValidationSchema = Yup.object().shape({
 
       return schema.min(
         endCall,
-        'Internal call end date can not be before  call end date.'
+        'Internal call end date can not be before call end date.'
       );
     }),
   templateId: Yup.number().required(),
