@@ -1,6 +1,6 @@
 import { UserinfoResponse } from 'openid-client';
 
-import { RequiredField } from './utilityTypes/RequiredField';
+import { RequiredField } from '../types/RequiredField';
 
 export type ValidUserInfo = RequiredField<
   UserinfoResponse,
