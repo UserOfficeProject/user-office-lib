@@ -1,8 +1,120 @@
-import { logger } from '@user-office-software/duo-logger';
-import { BaseClient, Issuer } from 'openid-client';
+import { BaseClient, Issuer, TokenSet, UserinfoResponse } from 'openid-client';
+
+import { ValidTokenSet } from './model/ValidTokenSet';
+import { ValidUserInfo } from './model/ValidUserInfo';
 
 export class OpenIdClient {
-  private static instance: BaseClient;
+  private static instance: BaseClient | null = null;
+
+  /**
+   * This function is used to get the user profile from the authorization code
+   * @param code authorization code
+   * @param redirectUri redirect uri, this must match to what is specified in authorization server
+   * @returns
+   */
+  public static async login(code: string, redirectUri: string) {
+    try {
+      /**
+       * Requesting Authorization server to exchange the code for a tokenset,
+       ** and validating the return value that it has both - access_token and id_token
+       */
+      const callbackParams = new URLSearchParams();
+      callbackParams.append('code', code);
+
+      const instance = await this.getInstance();
+
+      const params = instance.callbackParams(`?${callbackParams.toString()}`);
+
+      const tokenSet = OpenIdClient.validateTokenSet(
+        await instance.callback(redirectUri, params)
+      );
+
+      /**
+       * Getting and validating the userProfile from the previously obtained tokenset
+       */
+      const userProfile = this.validateUserProfile(
+        await instance.userinfo<UserinfoResponse>(tokenSet)
+      );
+
+      /**
+       * If the user profile is valid, then we upsert the user and return it
+       */
+
+      return { tokenSet, userProfile };
+    } catch (error) {
+      throw new Error('Error ocurred while logging in with external token');
+    }
+  }
+
+  /**
+   * Invalidate the accessToken
+   * @param accessToken accesstoken received from the the login method
+   */
+  public static async logout(accessToken: string) {
+    const instance = await this.getInstance();
+    await instance.revoke(accessToken);
+  }
+
+  /**
+   * Url to redirect the user to in order to login
+   * @returns the string with the url
+   */
+  public static async loginUrl() {
+    const instance = await this.getInstance();
+
+    return instance.authorizationUrl({
+      scope: this.getScopes().join(' '),
+    });
+  }
+
+  /**
+   * This function is used to get the instance of the openid client
+   * @returns return string with the url
+   * */
+  public static async logoutUrl() {
+    const instance = await this.getInstance();
+    let endSessionUrl: string;
+    try {
+      endSessionUrl = instance.endSessionUrl(); // try obtaining the end session url the standard way
+    } catch (e) {
+      endSessionUrl =
+        (instance.issuer.ping_end_session_endpoint as string) ?? '/'; // try using PING ping_end_session_endpoint
+    }
+
+    return endSessionUrl;
+  }
+
+  /**
+   * This function is used to get the instance of the openid client
+   * @returns return config object
+   * */
+  public static getConfig() {
+    const discoveryUrl = process.env.AUTH_DISCOVERY_URL;
+    const clientId = process.env.AUTH_CLIENT_ID;
+    const clientSecret = process.env.AUTH_CLIENT_SECRET;
+    if (!discoveryUrl || !clientId || !clientSecret) {
+      throw new Error('One or more ENV variables for OAUTH not defined');
+    }
+
+    return {
+      discoveryUrl,
+      clientId,
+      clientSecret,
+    };
+  }
+
+  /**
+   * Returns true if config is set in the environment variables
+   * */
+  public static hasConfig() {
+    try {
+      const { discoveryUrl, clientId, clientSecret } = this.getConfig();
+
+      return !!discoveryUrl && !!clientId && !!clientSecret;
+    } catch (error) {
+      return false;
+    }
+  }
 
   static async getInstance() {
     if (!this.instance) {
@@ -10,6 +122,10 @@ export class OpenIdClient {
     }
 
     return this.instance;
+  }
+
+  private static getScopes() {
+    return ['openid', 'profile', 'email'];
   }
 
   private static async createClient() {
@@ -38,13 +154,13 @@ export class OpenIdClient {
       const issuer = await Issuer.discover(discoveryUrl);
       if (issuer) {
         this.failCounter = 0;
-        logger.logInfo('OAuthIssuer discovery successful', {
+        console.info('OAuthIssuer discovery successful', {
           discoveryUrl,
         });
 
         return issuer;
       } else {
-        logger.logError(
+        console.error(
           'Unexpected behavior of Issuer. The returned client is null',
           {
             discoveryUrl,
@@ -54,7 +170,7 @@ export class OpenIdClient {
         throw new Error('OAuthIssuer discovery failed');
       }
     } catch (error) {
-      logger.logError('Error ocurred while obtaining OAuthIssuer', {
+      console.error('Error ocurred while obtaining OAuthIssuer', {
         error: (error as Error)?.message,
         numberOfFails: this.failCounter,
       });
@@ -68,37 +184,26 @@ export class OpenIdClient {
     }
   }
 
-  public static getConfig() {
-    const discoveryUrl = process.env.AUTH_DISCOVERY_URL;
-    const clientId = process.env.AUTH_CLIENT_ID;
-    const clientSecret = process.env.AUTH_CLIENT_SECRET;
-    if (!discoveryUrl || !clientId || !clientSecret) {
-      logger.logError('One or more ENV variables for OAUTH not defined', {
-        discoveryUrl,
-        clientId,
-        clientSecret: clientSecret ? '******' : undefined,
-      });
-      throw new Error('One or more ENV variables for OAUTH not defined');
-    }
-
+  private static validateUserProfile(
+    userProfile: UserinfoResponse
+  ): ValidUserInfo {
     return {
-      discoveryUrl,
-      clientId,
-      clientSecret,
-    };
+      ...userProfile,
+      email: userProfile.email ?? '',
+      family_name: userProfile.family_name ?? '',
+      given_name: userProfile.given_name ?? '',
+    } as ValidUserInfo;
   }
 
-  public static hasConfiguration() {
-    try {
-      const { discoveryUrl, clientId, clientSecret } = this.getConfig();
-
-      return !!discoveryUrl && !!clientId && !!clientSecret;
-    } catch (error) {
-      return false;
+  private static validateTokenSet(tokenSet: TokenSet): ValidTokenSet {
+    if (!tokenSet.access_token) {
+      console.error('Invalid tokenSet', {
+        authorizer: this.constructor.name,
+        tokenSet,
+      });
+      throw new Error('Invalid tokenSet');
     }
-  }
 
-  public static getScopes() {
-    return ['openid', 'profile', 'email'];
+    return tokenSet as ValidTokenSet;
   }
 }
