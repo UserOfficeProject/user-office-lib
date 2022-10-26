@@ -29,7 +29,6 @@ export const dateQuestionValidationSchema = (field: any) => {
 
   if (config.required) {
     schema = Yup.date()
-      .nullable()
       .required('This field is required')
       .transform(function (value: Date) {
         return value && this.isType(value)
