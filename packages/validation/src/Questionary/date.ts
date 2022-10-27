@@ -31,8 +31,11 @@ export const dateQuestionValidationSchema = (field: any) => {
     schema = Yup.date()
       .required('This field is required')
       .transform(function (value: Date) {
-        return normalizeDate(value.toISOString(), config.includeTime);
-      });
+        return value && this.isType(value)
+          ? normalizeDate(value.toISOString(), config.includeTime)
+          : value;
+      })
+      .typeError(config.includeTime ? 'Invalid datetime' : 'Invalid date');
   } else {
     schema = Yup.date()
       .typeError(config.includeTime ? 'Invalid datetime' : 'Invalid date')
