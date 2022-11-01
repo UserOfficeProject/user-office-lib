@@ -17,12 +17,26 @@ npm install @user-office-software/duo-validation
 
 ## Usage
 
+Example for setting up console logger
 ```typescript
 import { ConsoleLogger, setLogger } from '@user-office-software/duo-logger';
 
 // set ConsoleLogger as your logging service
 setLogger(new ConsoleLogger());
 ```
+
+Example for setting up Graylog logger
+```typescript
+setLogger(
+  new GrayLogLogger(
+    'my-graylog-server.com',
+    12201,
+    { environment: 'develop', service: 'my-service' },
+    []
+  )
+);
+```
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
