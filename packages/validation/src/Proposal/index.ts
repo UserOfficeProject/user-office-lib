@@ -6,8 +6,8 @@ export const createProposalValidationSchema = Yup.object().shape({
 
 export const updateProposalValidationSchema = Yup.object().shape({
   proposalPk: Yup.number().required(),
-  title: Yup.string().notRequired(),
-  abstract: Yup.string().notRequired(),
+  title: Yup.string().required(),
+  abstract: Yup.string().required(),
   answers: Yup.array().notRequired(),
   topicsCompleted: Yup.array().notRequired(),
   users: Yup.array().notRequired(),
