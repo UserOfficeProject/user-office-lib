@@ -7,3 +7,4 @@ export * from './numberInput';
 export * from './richTextInput';
 export * from './sampleDeclaration';
 export * from './textInput';
+export * from './dynamicMultipleChoice';
