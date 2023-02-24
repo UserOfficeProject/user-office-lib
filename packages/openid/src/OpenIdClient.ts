@@ -42,7 +42,11 @@ export class OpenIdClient {
 
       return { tokenSet, userProfile };
     } catch (error) {
-      throw new Error('Error ocurred while logging in with external token');
+      throw new Error(
+        'Error ocurred while logging in with external token. OpenIdclient error:"' +
+          (error as Error)?.message +
+          '"'
+      );
     }
   }
 

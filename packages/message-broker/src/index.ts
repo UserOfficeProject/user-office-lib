@@ -1,5 +1,5 @@
 import { logger } from '@user-office-software/duo-logger';
-import amqp, { Connection, Channel, MessageProperties, Options } from 'amqplib';
+import amqp, { Channel, Connection, MessageProperties, Options } from 'amqplib';
 
 type Message = {
   queue: Queue;
@@ -25,6 +25,11 @@ export type ConsumerCallback = (
 export interface MessageBroker {
   sendMessage(queue: Queue, type: string, message: string): Promise<void>;
   sendBroadcast(queue: Queue, type: string, message: string): Promise<void>;
+  sendMessageToExchange(
+    exchangeName: string,
+    type: string,
+    msg: string
+  ): Promise<void>;
   listenOn(queue: Queue, cb: ConsumerCallback): void;
   listenOnBroadcast(cb: ConsumerCallback): void;
 }
@@ -148,6 +153,34 @@ export class RabbitMQMessageBroker implements MessageBroker {
         type,
         msg,
       });
+    }
+  }
+
+  async sendMessageToExchange(exchangeName: string, type: string, msg: string) {
+    if (!this.channel) {
+      logger.logWarn('Channel is not available', { type, msg });
+
+      return;
+    }
+
+    try {
+      await this.channel.assertExchange(exchangeName, 'fanout', {
+        durable: true,
+      });
+      this.channel.publish(exchangeName, '', Buffer.from(msg), {
+        persistent: true,
+        timestamp: Date.now(),
+        type: type,
+      });
+    } catch (err) {
+      logger.logException(
+        'sending exchange message failed at some point',
+        err,
+        {
+          type,
+          msg,
+        }
+      );
     }
   }
 
