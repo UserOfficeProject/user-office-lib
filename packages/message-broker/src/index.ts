@@ -30,6 +30,7 @@ export interface MessageBroker {
     type: string,
     msg: string
   ): Promise<void>;
+  bindQueueToExchange(queueName: string, exchangeName: string): Promise<void>;
   listenOn(queue: Queue, cb: ConsumerCallback): void;
   listenOnBroadcast(cb: ConsumerCallback): void;
 }
@@ -179,6 +180,33 @@ export class RabbitMQMessageBroker implements MessageBroker {
         {
           type,
           msg,
+        }
+      );
+    }
+  }
+
+  async bindQueueToExchange(queueName: string, exchangeName: string) {
+    if (!this.channel) {
+      logger.logWarn('Channel is not available', { exchangeName, queueName });
+
+      return;
+    }
+
+    try {
+      await this.assertQueue(queueName as Queue);
+      await this.channel.bindQueue(queueName, exchangeName, '');
+
+      logger.logInfo(
+        `Queue ${queueName} successfully bound to exchange ${exchangeName}`,
+        {}
+      );
+    } catch (err) {
+      logger.logException(
+        'binding queue to exchange failed at some point',
+        err,
+        {
+          queueName,
+          exchangeName,
         }
       );
     }
