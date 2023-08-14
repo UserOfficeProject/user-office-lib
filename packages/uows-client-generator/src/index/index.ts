@@ -83,8 +83,8 @@ const generateCode = (obj: any, wsdl: string, filePath: string): void => {
 };
 
 //Creates the UOWSService.ts file
-const createInterface = (): void => {
-  const args = getArgs();
+const createInterface = async () => {
+  const args = await getArgs();
   const wsdl: string = args._.length > 0 ? `${args._[0]}` : args.wsdl;
   const outputPath: string =
     args._.length > 1 ? `${args._[1]}` : args.outputPath;
