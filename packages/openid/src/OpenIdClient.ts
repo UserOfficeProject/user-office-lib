@@ -181,9 +181,12 @@ export class OpenIdClient {
 
       return new Promise((resolve) => {
         this.failCounter++;
-        setTimeout(() => {
-          resolve(this.getIssuer());
-        }, 1000 * Math.pow(2, this.failCounter)); // repeat the request after 2^n seconds
+        setTimeout(
+          () => {
+            resolve(this.getIssuer());
+          },
+          1000 * Math.pow(2, this.failCounter)
+        ); // repeat the request after 2^n seconds
       });
     }
   }

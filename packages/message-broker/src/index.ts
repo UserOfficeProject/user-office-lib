@@ -194,6 +194,9 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
     try {
       await this.assertQueue(queueName as Queue);
+      await this.channel.assertExchange(exchangeName, 'fanout', {
+        durable: true,
+      });
       await this.channel.bindQueue(queueName, exchangeName, '');
 
       logger.logInfo(
