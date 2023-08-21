@@ -35,13 +35,13 @@ If your package has external dependencies (usually it does) you can do so by usi
 ### Adding new dependency for every package:
 
 ```bash
-$ lerna add <package>[@version] [--dev] [--exact] [--peer]
+$ npm install <dependency> -w <package1> -w <package2>
 ```
 
 ### Adding new dependency for a selected package:
 
 ```bash
-$ lerna add <package> packages/__PACKAGE_NAME__
+$ npm install <dependency> -w <package>
 ```
 
 > More details information on Lerna's page: https://github.com/lerna/lerna/tree/master/commands/add
@@ -54,8 +54,6 @@ Every package should have a `build` command which compiles TS to JS using a prop
 ## Useful NPM scripts
 
 ```bash
-# Installs the packages' dependencies and links local packages
-$ npm run lerna:bootstrap
 
 # Runs the `build` script in every package which contains this script in its `package.json`
 $ npm run lerna:build
@@ -68,7 +66,7 @@ $ npm run lerna:test
 $ npm run clean
 
 # Runs `npm run clean` to remove node_modules and built files
-# Runs `npm run lerna:bootstrap` to install the dependencies and to update `package-lock.json`
+# Runs `npm install` using npm workspaces to install all the dependencies and to update `package-lock.json`
 # Runs `npm run lerna:build` just to make sure everything still works properly
 $ npm run lerna:prePublish
 ```
