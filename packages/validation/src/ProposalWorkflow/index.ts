@@ -40,3 +40,59 @@ export const addNextStatusEventsValidationSchema = Yup.object().shape({
   proposalWorkflowConnectionId: Yup.number().required(),
   nextStatusEvents: Yup.array().of(Yup.string()).required(),
 });
+
+export const addStatusActionsToConnectionValidationSchema = <T>(
+  emailStatusActionType: T,
+  rabbitMQStatusActionType: T,
+  proposalStatusActionTypes: T[]
+) =>
+  Yup.object().shape({
+    connectionId: Yup.number().required(),
+    workflowId: Yup.number().required(),
+    actions: Yup.array()
+      .of(
+        Yup.object().shape({
+          actionId: Yup.number().required(),
+          actionType: Yup.mixed<T>()
+            .oneOf(proposalStatusActionTypes)
+            .required(),
+          config: Yup.object().test(
+            'RecipientWithTemplate',
+            'Invalid values provided for action config',
+            (value: any, context: any) => {
+              switch (context.parent.actionType) {
+                case emailStatusActionType: {
+                  // NOTE: Value here is: EmailActionConfig from the core codebase
+                  if (value.recipientsWithEmailTemplate?.length) {
+                    const filteredNonCompleteValues =
+                      value.recipientsWithEmailTemplate.filter(
+                        (item: any) =>
+                          !item.recipient?.name || !item.emailTemplate?.id
+                      );
+
+                    if (filteredNonCompleteValues.length) {
+                      return false;
+                    }
+
+                    return true;
+                  } else {
+                    return false;
+                  }
+                }
+                case rabbitMQStatusActionType: {
+                  // NOTE: Value here is: RabbitMQActionConfig from the core codebase
+                  if (value.exchanges?.length) {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                }
+                default:
+                  return false;
+              }
+            }
+          ),
+        })
+      )
+      .notRequired(),
+  });
