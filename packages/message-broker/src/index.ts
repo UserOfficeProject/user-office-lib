@@ -329,10 +329,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
         {}
       );
 
-      const consumers = this.consumers;
-      this.consumers = [];
-
-      for (const [queue, cb] of consumers) {
+      for (const [queue, cb] of this.consumers) {
         await this.assertQueue(queue);
 
         await this.channel.consume(
