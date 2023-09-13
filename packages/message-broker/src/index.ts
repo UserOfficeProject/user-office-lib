@@ -30,7 +30,7 @@ export interface MessageBroker {
     type: string,
     msg: string
   ): Promise<void>;
-  bindQueueToExchange(queueName: string, exchangeName: string): Promise<void>;
+  addQueueToExchangeBinding(queueName: string, exchangeName: string): void;
   listenOn(queue: Queue, cb: ConsumerCallback): void;
   listenOnBroadcast(cb: ConsumerCallback): void;
 }
@@ -40,6 +40,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
   private socketOptions: any;
 
   private consumers: Array<[Queue, ConsumerCallback]> = [];
+  private queueExchangeBindings: Array<[string, string]> = [];
   private connection: Connection | null = null;
   private channel: Channel | null = null;
   private messageBuffer: Message[] = [];
@@ -92,6 +93,13 @@ export class RabbitMQMessageBroker implements MessageBroker {
         },
         { noAck: false }
       );
+    }
+  }
+
+  addQueueToExchangeBinding(queueName: string, exchangeName: string) {
+    this.queueExchangeBindings.push([queueName, exchangeName]);
+    if (this.channel) {
+      this.bindQueuesToExchanges();
     }
   }
 
@@ -185,33 +193,38 @@ export class RabbitMQMessageBroker implements MessageBroker {
     }
   }
 
-  async bindQueueToExchange(queueName: string, exchangeName: string) {
+  async bindQueuesToExchanges() {
     if (!this.channel) {
-      logger.logWarn('Channel is not available', { exchangeName, queueName });
+      logger.logWarn(
+        'Cannot bind queues to exchanges: Channel is not available',
+        {}
+      );
 
       return;
     }
 
-    try {
-      await this.assertQueue(queueName as Queue);
-      await this.channel.assertExchange(exchangeName, 'fanout', {
-        durable: true,
-      });
-      await this.channel.bindQueue(queueName, exchangeName, '');
+    for (const [queueName, exchangeName] of this.queueExchangeBindings) {
+      try {
+        await this.assertQueue(queueName as Queue);
+        await this.channel.assertExchange(exchangeName, 'fanout', {
+          durable: true,
+        });
+        await this.channel.bindQueue(queueName, exchangeName, '');
 
-      logger.logInfo(
-        `Queue ${queueName} successfully bound to exchange ${exchangeName}`,
-        {}
-      );
-    } catch (err) {
-      logger.logException(
-        'binding queue to exchange failed at some point',
-        err,
-        {
-          queueName,
-          exchangeName,
-        }
-      );
+        logger.logInfo(
+          `Queue ${queueName} successfully bound to exchange ${exchangeName}`,
+          {}
+        );
+      } catch (err) {
+        logger.logException(
+          'binding queue to exchange failed at some point',
+          err,
+          {
+            queueName,
+            exchangeName,
+          }
+        );
+      }
     }
   }
 
@@ -247,6 +260,8 @@ export class RabbitMQMessageBroker implements MessageBroker {
       await this.registerChannel();
 
       await this.registerConsumers();
+
+      await this.bindQueuesToExchanges();
 
       logger.logInfo('RabbitMQMessageBroker: Setup finished', {});
     } catch (e) {

@@ -10,6 +10,7 @@ describe('RabbitMQMessageBroker', () => {
   let mockAmqpChannel: jest.Mocked<Partial<amqp.Channel>>;
   let mockAmqpConnection: jest.Mocked<Partial<amqp.Connection>>;
   let mockAmqpConnectionEventCallbacks: Map<string, Function> = new Map();
+  const TEST_EXCHANGE = 'user_office_backend.fanout';
 
   beforeEach(() => {
     mockAmqpChannel = {
@@ -82,6 +83,55 @@ describe('RabbitMQMessageBroker', () => {
       );
 
       expect(mockAmqpChannel.consume).toHaveBeenCalledTimes(2);
+    });
+
+    it('should bind a queue to exchange when "addQueueToExchangeBinding" function is called', async () => {
+      broker.addQueueToExchangeBinding(
+        Queue.SCHEDULING_PROPOSAL,
+        TEST_EXCHANGE
+      );
+
+      // waiting for addQueueToExchangeBinding function to finish behind the scenes
+      await sleep();
+
+      expect(mockAmqpChannel.bindQueue).toHaveBeenCalledWith(
+        Queue.SCHEDULING_PROPOSAL,
+        TEST_EXCHANGE,
+        ''
+      );
+    });
+
+    it('should re-bind queues to exchanges during reconnection', async () => {
+      // add queue to exchange binding
+      broker.addQueueToExchangeBinding(
+        Queue.SCHEDULING_PROPOSAL,
+        TEST_EXCHANGE
+      );
+
+      // waiting for registerConsumer function to finish behind the scenes
+      await sleep();
+
+      // use fake timers to simulate 5sec timeout
+      jest.useFakeTimers();
+
+      // simulate connection close event
+      mockAmqpConnectionEventCallbacks.get('close')!();
+
+      // waiting for scheduleReconnect calls setup again
+      jest.runAllTimers();
+      jest.useRealTimers();
+
+      // waiting for setup function to finish behind the scenes
+      await sleep();
+
+      expect(mockAmqpChannel.bindQueue).toHaveBeenCalledWith(
+        Queue.SCHEDULING_PROPOSAL,
+        TEST_EXCHANGE,
+        ''
+      );
+
+      // it should be called 4 times because assertQueue also calls bindQueue for binding deadLetterQueue to deadLetterExchange 
+      expect(mockAmqpChannel.bindQueue).toHaveBeenCalledTimes(4);
     });
   });
 });
