@@ -22,6 +22,12 @@ export const createScheduledEventValidationSchema = (
     endsAt: Yup.date()
       .typeError(TYPE_ERR_INVALID_DATE)
       .when('startsAt', (startsAt: Date) => {
+        const isValidDate = DateTime.fromJSDate(startsAt).isValid;
+
+        if (!isValidDate) {
+          return Yup.date();
+        }
+
         const min = DateTime.fromJSDate(startsAt).plus({ minute: 1 });
 
         return Yup.date().min(
@@ -45,6 +51,12 @@ export const bulkUpsertScheduledEventsValidationSchema = Yup.object().shape({
         endsAt: Yup.date()
           .typeError(TYPE_ERR_INVALID_DATE)
           .when('startsAt', (startsAt: Date) => {
+            const isValidDate = DateTime.fromJSDate(startsAt).isValid;
+
+            if (!isValidDate) {
+              return Yup.date();
+            }
+
             const min = DateTime.fromJSDate(startsAt).plus({ minute: 1 });
 
             return Yup.date().min(
@@ -64,6 +76,12 @@ export const updateScheduledEventValidationSchema = Yup.object().shape({
   endsAt: Yup.date()
     .typeError(TYPE_ERR_INVALID_DATE)
     .when('startsAt', (startsAt: Date) => {
+      const isValidDate = DateTime.fromJSDate(startsAt).isValid;
+
+      if (!isValidDate) {
+        return Yup.date();
+      }
+
       const min = DateTime.fromJSDate(startsAt).plus({ minute: 1 });
 
       return Yup.date().min(
