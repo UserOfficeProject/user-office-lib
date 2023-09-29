@@ -161,3 +161,9 @@ export const removeAssignedInstrumentFromCallValidationSchema =
     callId: Yup.number().required('callId is required'),
     instrumentId: Yup.number().required('instrumentId is required'),
   });
+
+export const updateSepToCallInstrumentValidationSchema = Yup.object().shape({
+  callId: Yup.number().required('callId is required'),
+  instrumentId: Yup.number().required('instrumentId is required'),
+  sepId: Yup.number(),
+});
