@@ -75,7 +75,7 @@ export const addStatusActionsToConnectionValidationSchema = <T, U>(
                       return false;
                     }
 
-                    const foundOtherEmailRecipients =
+                    const foundOtherRecipient =
                       value.recipientsWithEmailTemplate.find(
                         (recipientWithEmailTemplate: any) =>
                           recipientWithEmailTemplate.recipient.name ===
@@ -83,7 +83,7 @@ export const addStatusActionsToConnectionValidationSchema = <T, U>(
                       );
 
                     // NOTE: Check if 'OTHER' is selected as recipient and valid emails are provided as input.
-                    if (foundOtherEmailRecipients) {
+                    if (foundOtherRecipient) {
                       await Yup.array()
                         .of(
                           Yup.string().email(
@@ -91,9 +91,8 @@ export const addStatusActionsToConnectionValidationSchema = <T, U>(
                           )
                         )
                         .min(1, 'You must provide at least 1 valid email')
-                        .validate(
-                          foundOtherEmailRecipients.otherEmailRecipients
-                        );
+                        .required()
+                        .validate(foundOtherRecipient.otherRecipientEmails);
                     }
 
                     return true;
