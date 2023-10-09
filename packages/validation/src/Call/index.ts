@@ -149,6 +149,36 @@ export const updateCallValidationSchemas = [
   thirdStepCallValidationSchema,
 ];
 
+export const updateCallValidationSchemaBackend = Yup.object().shape({
+  id: Yup.object()
+    .shape({
+      id: Yup.number().required('Id is required'),
+    })
+    .required(),
+  // from first step
+  shortCode: firstStepCreateCallValidationSchema.fields.shortCode.optional(),
+  startCall: firstStepCreateCallValidationSchema.fields.startCall.optional(),
+  endCall: firstStepCreateCallValidationSchema.fields.endCall.optional(),
+  endCallInternal:
+    firstStepCreateCallValidationSchema.fields.endCallInternal.optional(),
+  templateId: firstStepCreateCallValidationSchema.fields.templateId.optional(),
+  proposalWorkflowId:
+    firstStepCreateCallValidationSchema.fields.proposalWorkflowId.optional(),
+  // from second step
+  startReview: secondStepCallValidationSchema.fields.startReview.optional(),
+  endReview: secondStepCallValidationSchema.fields.endReview.optional(),
+  startSEPReview:
+    secondStepCallValidationSchema.fields.startSEPReview.optional(),
+  endSEPReview: secondStepCallValidationSchema.fields.endSEPReview.optional(),
+  surveyComment: secondStepCallValidationSchema.fields.surveyComment.optional(),
+  // from third step
+  startNotify: thirdStepCallValidationSchema.fields.startNotify.optional(),
+  endNotify: thirdStepCallValidationSchema.fields.endNotify.optional(),
+  startCycle: thirdStepCallValidationSchema.fields.startCycle.optional(),
+  endCycle: thirdStepCallValidationSchema.fields.endCycle.optional(),
+  cycleComment: thirdStepCallValidationSchema.fields.cycleComment.optional(),
+});
+
 export const assignInstrumentsToCallValidationSchema = Yup.object().shape({
   callId: Yup.number().required('callId is required'),
   instrumentIds: Yup.array(Yup.number())
