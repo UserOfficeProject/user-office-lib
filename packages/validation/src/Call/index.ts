@@ -149,13 +149,9 @@ export const updateCallValidationSchemas = [
   thirdStepCallValidationSchema,
 ];
 
-export const updateCallValidationSchemaBackend = Yup.object().shape({
-  id: Yup.object()
-    .shape({
-      id: Yup.number().required('Id is required'),
-    })
-    .required(),
+export const updateCallValidationBackendSchema = Yup.object().shape({
   // from first step
+  id: firstStepUpdateCallValidationSchema.fields.id,
   shortCode: firstStepCreateCallValidationSchema.fields.shortCode.optional(),
   startCall: firstStepCreateCallValidationSchema.fields.startCall.optional(),
   endCall: firstStepCreateCallValidationSchema.fields.endCall.optional(),
