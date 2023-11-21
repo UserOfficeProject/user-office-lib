@@ -2,18 +2,18 @@ import * as Yup from 'yup';
 
 import {
   sanitizeHtmlAndCleanText,
-  SEP_REVIEW_COMMENT_CHAR_LIMIT,
+  FAP_REVIEW_COMMENT_CHAR_LIMIT,
 } from '../util';
 
-const proposalSEPReviewCommentValidationSchema = () => {
+const proposalFapReviewCommentValidationSchema = () => {
   let schema = Yup.string().transform(function (value: string) {
     return sanitizeHtmlAndCleanText(value);
   });
 
   schema = schema
     .max(
-      SEP_REVIEW_COMMENT_CHAR_LIMIT,
-      `Comment must be at most ${SEP_REVIEW_COMMENT_CHAR_LIMIT} characters`
+      FAP_REVIEW_COMMENT_CHAR_LIMIT,
+      `Comment must be at most ${FAP_REVIEW_COMMENT_CHAR_LIMIT} characters`
     )
     .required();
 
@@ -21,7 +21,7 @@ const proposalSEPReviewCommentValidationSchema = () => {
 };
 
 export const proposalGradeValidationSchema = Yup.object().shape({
-  comment: proposalSEPReviewCommentValidationSchema(),
+  comment: proposalFapReviewCommentValidationSchema(),
   grade: Yup.number()
     .min(1, 'Lowest grade is 1')
     .max(10, 'Highest grade is 10')

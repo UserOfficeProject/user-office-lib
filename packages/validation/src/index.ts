@@ -4,7 +4,7 @@ export * from './Proposal';
 export * from './ProposalStatuses';
 export * from './ProposalWorkflow';
 export * from './Review';
-export * from './SEP';
+export * from './fap';
 export * from './PredefinedMessage';
 export * from './Template';
 export * from './User';

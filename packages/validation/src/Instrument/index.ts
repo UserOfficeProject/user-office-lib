@@ -59,5 +59,5 @@ export const setAvailabilityTimeOnInstrumentValidationSchema =
 export const submitInstrumentValidationSchema = Yup.object().shape({
   callId: Yup.number().required(),
   instrumentId: Yup.number().required(),
-  sepId: Yup.number().required(),
+  fapId: Yup.number().required(),
 });
