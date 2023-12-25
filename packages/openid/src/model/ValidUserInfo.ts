@@ -1,8 +1,12 @@
-import { UserinfoResponse } from 'openid-client';
-
+import { PingUserInfoResponse } from './PingUserInfoResponse';
 import { RequiredField } from '../types/RequiredField';
 
 export type ValidUserInfo = RequiredField<
-  UserinfoResponse,
-  'sub' | 'given_name' | 'family_name' | 'email'
+  PingUserInfoResponse,
+  | 'sub'
+  | 'given_name'
+  | 'family_name'
+  | 'email'
+  | 'institution_name'
+  | 'institution_country'
 >;
