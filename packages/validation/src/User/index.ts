@@ -65,7 +65,7 @@ export const createUserValidationSchema = Yup.object().shape({
       }
     })
     .required('Please specify your birth date'),
-  institution: Yup.number().required(),
+  institutionId: Yup.number().required(),
   department: Yup.string().min(2).max(50).required(),
   position: Yup.string().min(2).max(50).required(),
   telephone: Yup.string()
@@ -107,7 +107,7 @@ export const updateUserValidationSchema = Yup.object().shape({
       }
     })
     .required('Please specify your birth date'),
-  institution: Yup.number().required(),
+  institutionId: Yup.number().required(),
   department: Yup.string().min(2).max(50).required(),
   position: Yup.string().min(2).max(50).required(),
   telephone: Yup.string()
