@@ -1,6 +1,6 @@
 {
   "name": "@user-office-software/duo-validation",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "description": "Duo frontend and backend validation in one place.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
