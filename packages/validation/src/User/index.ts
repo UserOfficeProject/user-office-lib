@@ -65,7 +65,7 @@ export const createUserValidationSchema = Yup.object().shape({
       }
     })
     .required('Please specify your birth date'),
-  organisation: Yup.number().required(),
+  institutionId: Yup.number().required(),
   department: Yup.string().min(2).max(50).required(),
   position: Yup.string().min(2).max(50).required(),
   telephone: Yup.string()
@@ -77,14 +77,15 @@ export const createUserValidationSchema = Yup.object().shape({
 });
 
 export const updateUserValidationSchema = Yup.object().shape({
-  firstname: Yup.string().min(2).max(50).required(),
-  middlename: Yup.string().notRequired().max(50),
-  preferredname: Yup.string().notRequired().max(50),
-  lastname: Yup.string().min(2).max(50).required(),
-  gender: Yup.string().required(),
-  nationality: Yup.number().required(),
-  user_title: Yup.string().required(),
-  email: Yup.string().email().required(),
+  id: Yup.number().required(),
+  firstname: Yup.string().min(2).max(50),
+  middlename: Yup.string().max(50),
+  preferredname: Yup.string().max(50),
+  lastname: Yup.string().min(2).max(50),
+  gender: Yup.string(),
+  nationality: Yup.number(),
+  user_title: Yup.string(),
+  email: Yup.string().email(),
   birthdate: Yup.date()
     .min(new Date(1900, 1, 1), 'You are not that old')
     .test('DOB', 'You must be at least 18 years old', (value) => {
@@ -107,14 +108,13 @@ export const updateUserValidationSchema = Yup.object().shape({
       }
     })
     .required('Please specify your birth date'),
-  organisation: Yup.number().required(),
-  department: Yup.string().min(2).max(50).required(),
-  position: Yup.string().min(2).max(50).required(),
+  institutionId: Yup.number(),
+  department: Yup.string().min(2).max(50),
+  position: Yup.string().min(2).max(50),
   telephone: Yup.string()
     .min(2)
     .max(30)
-    .matches(phoneRegExp, 'telephone number is not valid')
-    .required(),
+    .matches(phoneRegExp, 'telephone number is not valid'),
   telephone_alt: Yup.string().max(50),
 });
 
