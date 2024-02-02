@@ -77,15 +77,14 @@ export const createUserValidationSchema = Yup.object().shape({
 });
 
 export const updateUserValidationSchema = Yup.object().shape({
-  id: Yup.number().required(),
-  firstname: Yup.string().min(2).max(50),
-  middlename: Yup.string().max(50),
-  preferredname: Yup.string().max(50),
-  lastname: Yup.string().min(2).max(50),
-  gender: Yup.string(),
-  nationality: Yup.number(),
-  user_title: Yup.string(),
-  email: Yup.string().email(),
+  firstname: Yup.string().min(2).max(50).required(),
+  middlename: Yup.string().notRequired().max(50),
+  preferredname: Yup.string().notRequired().max(50),
+  lastname: Yup.string().min(2).max(50).required(),
+  gender: Yup.string().required(),
+  nationality: Yup.number().required(),
+  user_title: Yup.string().required(),
+  email: Yup.string().email().required(),
   birthdate: Yup.date()
     .min(new Date(1900, 1, 1), 'You are not that old')
     .test('DOB', 'You must be at least 18 years old', (value) => {
@@ -108,13 +107,52 @@ export const updateUserValidationSchema = Yup.object().shape({
       }
     })
     .required('Please specify your birth date'),
-  institutionId: Yup.number(),
-  department: Yup.string().min(2).max(50),
-  position: Yup.string().min(2).max(50),
+  institutionId: Yup.number().required(),
+  department: Yup.string().min(2).max(50).required(),
+  position: Yup.string().min(2).max(50).required(),
   telephone: Yup.string()
     .min(2)
     .max(30)
-    .matches(phoneRegExp, 'telephone number is not valid'),
+    .matches(phoneRegExp, 'telephone number is not valid')
+    .required(),
+  telephone_alt: Yup.string().max(50),
+});
+
+export const updateUserValidationBackendSchema = Yup.object().shape({
+  id: Yup.number().required(),
+  firstname: Yup.string().min(2).max(50).notRequired(),
+  middlename: Yup.string().optional().max(50),
+  preferredname: Yup.string().notRequired().max(50),
+  lastname: Yup.string().min(2).max(50).notRequired(),
+  gender: Yup.string().notRequired(),
+  nationality: Yup.number().notRequired(),
+  user_title: Yup.string().notRequired(),
+  email: Yup.string().email().notRequired(),
+  birthdate: Yup.date()
+    .min(new Date(1900, 1, 1), 'You are not that old')
+    .test('DOB', 'You must be at least 18 years old', (value) => {
+      if (!value) {
+        return true;
+      }
+
+      const dateOfBirth = new Date(value);
+      const dateNow = new Date();
+
+      if (dateNow.getFullYear() - dateOfBirth.getFullYear() < 18) {
+        return false;
+      } else {
+        return true;
+      }
+    })
+    .notRequired(),
+  institutionId: Yup.number().notRequired(),
+  department: Yup.string().min(2).max(50).notRequired(),
+  position: Yup.string().min(2).max(50).notRequired(),
+  telephone: Yup.string()
+    .min(2)
+    .max(30)
+    .matches(phoneRegExp, 'telephone number is not valid')
+    .notRequired(),
   telephone_alt: Yup.string().max(50),
 });
 
