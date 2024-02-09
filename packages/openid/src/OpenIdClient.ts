@@ -15,7 +15,7 @@ export class OpenIdClient {
   public static async login(
     code: string,
     redirectUri: string,
-    iss: string | null
+    iss?: string | null
   ) {
     try {
       /**
