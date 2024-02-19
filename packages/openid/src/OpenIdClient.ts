@@ -12,7 +12,11 @@ export class OpenIdClient {
    * @param redirectUri redirect uri, this must match to what is specified in authorization server
    * @returns
    */
-  public static async login(code: string, redirectUri: string) {
+  public static async login(
+    code: string,
+    redirectUri: string,
+    iss?: string | null
+  ) {
     try {
       /**
        * Requesting Authorization server to exchange the code for a tokenset,
@@ -23,6 +27,19 @@ export class OpenIdClient {
 
       const instance = await this.getInstance();
 
+      if (iss) {
+        if (iss !== instance.issuer.metadata.issuer) {
+          throw new Error(
+            `iss mismatch, expected ${instance.issuer.metadata.issuer}, got: ${iss}`
+          );
+        }
+
+        callbackParams.append('iss', iss);
+      } else if (
+        instance.issuer.metadata.authorization_response_iss_parameter_supported
+      ) {
+        throw new Error(`iss missing from the response iss: ${iss}`);
+      }
       const params = instance.callbackParams(`?${callbackParams.toString()}`);
 
       const tokenSet = OpenIdClient.validateTokenSet(
