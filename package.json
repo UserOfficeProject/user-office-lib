@@ -12,7 +12,7 @@
     "lerna:prePublish": "npm run clean && npm install && npm run lerna:build",
     "clean": "lerna clean --yes && lerna run clean",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "workspaces": [
     "packages/*"
@@ -22,7 +22,7 @@
   "dependencies": {
     "@types/request": "^2.48.8",
     "@types/sax": "^1.2.4",
-    "typescript": "^5.1.6"
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
     "@types/jest": "^29.2.4",
@@ -33,9 +33,9 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.0",
     "eslint-plugin-prettier": "^5.0.0",
-    "husky": "^8.0.0",
-    "lerna": "^7.1.5",
-    "lint-staged": "^14.0.1",
+    "husky": "^9.0.11",
+    "lerna": "^8.1.2",
+    "lint-staged": "^15.2.2",
     "prettier": "^3.0.1"
   },
   "repository": {
