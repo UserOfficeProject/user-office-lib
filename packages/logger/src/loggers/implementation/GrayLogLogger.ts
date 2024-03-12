@@ -1,4 +1,5 @@
 import safeStringify from 'fast-safe-stringify';
+import logger, { MessageCallback } from 'gelf-pro';
 
 import { LEVEL } from '../../enum/Level';
 import { Logger } from '../Logger';
@@ -19,13 +20,15 @@ function extractPropertiesFromJson(
 }
 
 export class GrayLogLogger implements Logger {
-  log = require('gelf-pro');
+  log = logger;
+  errorCb: MessageCallback | undefined;
 
   constructor(
     server: string,
     port: number,
     staticValues?: Record<string, unknown>,
-    private contextToFieldProperties?: string[]
+    private contextToFieldProperties?: string[],
+    errorCb?: MessageCallback
   ) {
     this.log.setConfig({
       fields: staticValues,
@@ -35,7 +38,15 @@ export class GrayLogLogger implements Logger {
         port: port,
       },
     });
+
+    this.errorCb = errorCb || this.errorDefaultCb;
   }
+
+  private errorDefaultCb: MessageCallback = (error) => {
+    if (error?.message) {
+      console.error(error);
+    }
+  };
 
   private createPayload(
     level: LEVEL,
@@ -57,19 +68,35 @@ export class GrayLogLogger implements Logger {
   }
 
   logInfo(message: string, context: Record<string, unknown>) {
-    this.log.info(message, this.createPayload(LEVEL.INFO, message, context));
+    this.log.info(
+      message,
+      this.createPayload(LEVEL.INFO, message, context),
+      this.errorCb
+    );
   }
 
   logWarn(message: string, context: Record<string, unknown>) {
-    this.log.warning(message, this.createPayload(LEVEL.WARN, message, context));
+    this.log.warning(
+      message,
+      this.createPayload(LEVEL.WARN, message, context),
+      this.errorCb
+    );
   }
 
   logDebug(message: string, context: Record<string, unknown>) {
-    this.log.debug(message, this.createPayload(LEVEL.DEBUG, message, context));
+    this.log.debug(
+      message,
+      this.createPayload(LEVEL.DEBUG, message, context),
+      this.errorCb
+    );
   }
 
   logError(message: string, context: Record<string, unknown>) {
-    this.log.error(message, this.createPayload(LEVEL.ERROR, message, context));
+    this.log.error(
+      message,
+      this.createPayload(LEVEL.ERROR, message, context),
+      this.errorCb
+    );
   }
 
   logException(
