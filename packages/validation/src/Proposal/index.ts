@@ -24,17 +24,21 @@ export const proposalNotifyValidationSchema = submitProposalValidationSchema;
 
 export const administrationProposalValidationSchema = Yup.object().shape({
   proposalPk: Yup.number().required(),
-  statusId: Yup.number().nullable(),
-  finalStatus: Yup.string().nullable(),
+  finalStatus: Yup.string().required(),
   commentForUser: Yup.string().nullable(),
   commentForManagement: Yup.string().nullable(),
-  rankOrder: Yup.number()
-    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
-    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
-  managementTimeAllocation: Yup.number()
-    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
-    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
-    .nullable(),
+  managementTimeAllocations: Yup.array()
+    .of(
+      Yup.object().shape({
+        instrumentId: Yup.number().required(),
+        value: Yup.number()
+          .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
+          .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
+          .nullable(),
+      })
+    )
+    .required()
+    .min(1),
   managementDecisionSubmitted: Yup.bool().nullable(),
 });
 
