@@ -14,6 +14,7 @@ export * from './ProposalBooking';
 export * from './LostTime';
 export * from './Equipment';
 export * from './Questionary';
+export * from './Technique';
 
 import * as util from './util';
 
