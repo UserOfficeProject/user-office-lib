@@ -6,7 +6,7 @@ export const instrumentPickerValidationSchema = (field: any) => {
   const config = field.config;
 
   interface ValidationSchema {
-    instrumentId: string | undefined;
+    instrumentId: string | null | undefined;
     timeRequested: string | null | undefined;
   }
 
@@ -14,50 +14,57 @@ export const instrumentPickerValidationSchema = (field: any) => {
     | Yup.ArraySchema<SchemaOf<ValidationSchema>, AnyObject>
     | SchemaOf<ValidationSchema>;
 
-  schema = Yup.object().shape({
-    instrumentId: Yup.string(),
-    timeRequested: Yup.string(),
-  });
-
   if (config.isMultipleSelect) {
-    if (config.required) {
-      schema = Yup.array().of(
-        Yup.object().shape({
-          instrumentId: Yup.string().required(),
+    schema = Yup.array().of(
+      Yup.object()
+        .shape({
+          instrumentId: Yup.string(),
           timeRequested: Yup.string(),
         })
-      );
+        .nullable()
+    );
+    if (config.required) {
+      schema = schema.required().min(1);
     }
     if (config.requestTime) {
-      schema = Yup.array().of(
-        Yup.object().shape({
+      schema = Yup.array()
+        .of(
+          Yup.object().shape({
+            instrumentId: Yup.string(),
+            timeRequested: Yup.string()
+              .required('Request time field is required')
+              .test('is-number?', 'Requested time is not valid', (value) => {
+                if (Number(value) <= 0 || isNaN(Number(value))) return false;
+                else return true;
+              }),
+          })
+        )
+        .required()
+        .min(1);
+    }
+  } else {
+    schema = Yup.object()
+      .shape({
+        instrumentId: Yup.string(),
+        timeRequested: Yup.string(),
+      })
+      .nullable();
+    if (config.required) {
+      schema = schema.required();
+    }
+    if (config.requestTime) {
+      schema = Yup.object()
+        .shape({
           instrumentId: Yup.string(),
           timeRequested: Yup.string()
-            .required('Requested time is required')
+            .required('Request time field is required')
             .test('is-number?', 'Requested time is not valid', (value) => {
-              if (Number(value) < 0 || isNaN(Number(value))) return false;
+              if (Number(value) <= 0 || isNaN(Number(value))) return false;
               else return true;
             }),
         })
-      );
-    }
-  } else {
-    if (config.required) {
-      schema = Yup.object().shape({
-        instrumentId: Yup.string().required(),
-        timeRequested: Yup.string(),
-      });
-    }
-    if (config.requestTime) {
-      schema = Yup.object().shape({
-        instrumentId: Yup.string(),
-        timeRequested: Yup.string()
-          .required('Requested time is required')
-          .test('is-number?', 'Requested time is not valid', (value) => {
-            if (Number(value) < 0 || isNaN(Number(value))) return false;
-            else return true;
-          }),
-      });
+        .nullable()
+        .required('Field is required');
     }
   }
 
