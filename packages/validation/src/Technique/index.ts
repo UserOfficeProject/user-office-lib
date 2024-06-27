@@ -38,6 +38,6 @@ export const assignInstrumentsToTechniqueValidationSchema = Yup.object().shape({
 
 export const removeInstrumentsFromTechniqueValidationSchema =
   Yup.object().shape({
-    instrumentId: Yup.number().required(),
+    instrumentIds: Yup.array(Yup.number()).min(1).required(),
     techniqueId: Yup.number().required(),
   });
