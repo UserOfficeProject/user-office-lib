@@ -14,7 +14,7 @@ export const createTechniqueValidationSchema = Yup.object().shape({
 });
 
 export const updateTechniqueValidationSchema = Yup.object().shape({
-  techniqueId: Yup.number().required(),
+  id: Yup.number().required(),
   name: Yup.string()
     .max(100, 'Name of the technique should be no longer than 100 characters')
     .required('Name of the technique is required'),
@@ -28,7 +28,7 @@ export const updateTechniqueValidationSchema = Yup.object().shape({
 });
 
 export const deleteTechniqueValidationSchema = Yup.object().shape({
-  techniqueId: Yup.number().required(),
+  id: Yup.number().required(),
 });
 
 export const assignInstrumentsToTechniqueValidationSchema = Yup.object().shape({
@@ -38,6 +38,6 @@ export const assignInstrumentsToTechniqueValidationSchema = Yup.object().shape({
 
 export const removeInstrumentsFromTechniqueValidationSchema =
   Yup.object().shape({
-    instrumentId: Yup.number().required(),
+    instrumentIds: Yup.array(Yup.number()).min(1).required(),
     techniqueId: Yup.number().required(),
   });
