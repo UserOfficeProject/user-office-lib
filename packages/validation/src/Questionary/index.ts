@@ -9,4 +9,3 @@ export * from './sampleDeclaration';
 export * from './textInput';
 export * from './dynamicMultipleChoice';
 export * from './instrumentPicker';
-export * from './timeRequested';
