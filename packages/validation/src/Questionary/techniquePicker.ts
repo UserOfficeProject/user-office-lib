@@ -16,13 +16,13 @@ export const techniquePickerValidationSchema = (field: any) => {
     schema = Yup.array().of(Yup.number()).nullable();
 
     if (config.required) {
-      schema = schema.required().min(1);
+      schema = schema.min(1, 'Please choose a technique');
     }
   } else {
     schema = Yup.number().positive().integer().nullable();
 
     if (config.required) {
-      schema = schema.required();
+      schema = schema.required('This is a required field');
     }
   }
 
