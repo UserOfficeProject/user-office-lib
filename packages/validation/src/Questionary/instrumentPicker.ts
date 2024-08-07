@@ -34,7 +34,13 @@ export const instrumentPickerValidationSchema = (field: any) => {
             timeRequested: Yup.string()
               .required('Request time field is required')
               .test('is-number?', 'Requested time is not valid', (value) => {
-                if (Number(value) <= 0 || isNaN(Number(value))) return false;
+                const timeValue = Number(value);
+                if (
+                  isNaN(timeValue) ||
+                  timeValue <= 0 ||
+                  !Number.isInteger(timeValue)
+                )
+                  return false;
                 else return true;
               }),
           })
@@ -59,7 +65,13 @@ export const instrumentPickerValidationSchema = (field: any) => {
           timeRequested: Yup.string()
             .required('Request time field is required')
             .test('is-number?', 'Requested time is not valid', (value) => {
-              if (Number(value) <= 0 || isNaN(Number(value))) return false;
+              const timeValue = Number(value);
+              if (
+                isNaN(timeValue) ||
+                timeValue <= 0 ||
+                !Number.isInteger(timeValue)
+              )
+                return false;
               else return true;
             }),
         })
