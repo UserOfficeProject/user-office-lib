@@ -1,6 +1,8 @@
 import { logger } from '@user-office-software/duo-logger';
 import amqp, { Channel, Connection, MessageProperties, Options } from 'amqplib';
 
+import { Consumer } from './consumer';
+
 type Message = {
   queue: Queue;
   type: string;
@@ -30,8 +32,11 @@ export interface MessageBroker {
     type: string,
     msg: string
   ): Promise<void>;
-  addQueueToExchangeBinding(queueName: string, exchangeName: string): void;
-  listenOn(queue: Queue, cb: ConsumerCallback): void;
+  addQueueToExchangeBinding(
+    queueName: string,
+    exchangeName: string
+  ): Promise<void>;
+  listenOn(queue: Queue, cb: ConsumerCallback): Promise<void>;
   listenOnBroadcast(cb: ConsumerCallback): void;
 }
 
@@ -39,7 +44,7 @@ export class RabbitMQMessageBroker implements MessageBroker {
   private connectionConfig: string | Options.Connect = 'amqp://localhost';
   private socketOptions: any;
 
-  private consumers: Array<[Queue, ConsumerCallback]> = [];
+  private queueConsumers: Map<Queue, Consumer[]> = new Map();
   private queueExchangeBindings: Array<[string, string]> = [];
   private connection: Connection | null = null;
   private channel: Channel | null = null;
@@ -96,18 +101,22 @@ export class RabbitMQMessageBroker implements MessageBroker {
     }
   }
 
-  addQueueToExchangeBinding(queueName: string, exchangeName: string) {
+  async addQueueToExchangeBinding(queueName: string, exchangeName: string) {
     this.queueExchangeBindings.push([queueName, exchangeName]);
     if (this.channel) {
-      this.bindQueuesToExchanges();
+      await this.bindQueuesToExchanges();
     }
   }
 
-  listenOn(queue: Queue, cb: ConsumerCallback) {
-    this.consumers.push([queue, cb]);
+  async listenOn(queue: Queue, cb: ConsumerCallback) {
+    if (!this.queueConsumers.has(queue)) {
+      this.queueConsumers.set(queue, []);
+    }
+
+    this.queueConsumers.get(queue)?.push(new Consumer(cb));
 
     if (this.channel) {
-      this.registerConsumers();
+      await this.registerConsumers();
     }
   }
 
@@ -291,6 +300,13 @@ export class RabbitMQMessageBroker implements MessageBroker {
       {}
     );
 
+    // set unregistered state for all consumers to be able to register them again
+    for (const consumers of this.queueConsumers.values()) {
+      consumers.forEach((consumer) => {
+        consumer.unregister();
+      });
+    }
+
     setTimeout(() => this.setup(), 5000);
   }
 
@@ -340,84 +356,105 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
     try {
       logger.logInfo(
-        `RabbitMQMessageBroker: Registering consumers (${this.consumers.length})`,
+        `RabbitMQMessageBroker: Registering consumers (${this.queueConsumers.size})`,
         {}
       );
 
-      for (const [queue, cb] of this.consumers) {
+      for (const [queue, consumers] of this.queueConsumers.entries()) {
         await this.assertQueue(queue);
 
-        await this.channel.consume(
-          queue,
-          (msg) => {
-            // is this even possible???
-            if (!msg) {
-              return;
-            }
+        for (let ix = 0; ix < consumers.length; ix++) {
+          const consumer = consumers[ix];
 
-            const stringifiedContent = msg.content.toString();
-            let content: Record<string, unknown> = {};
+          if (consumer.isRegistered()) {
+            // if the consumer is already registered, skip it
+            continue;
+          } else {
+            // mark consumer as registered at the start of the loop to prevent multiple registrations.
+            // this is necessary because it is called multiple times in parallel without waiting for the result.
+            consumer.register();
+          }
 
-            try {
-              content = JSON.parse(stringifiedContent);
-            } catch (err) {
-              logger.logException(
-                'RabbitMQMessageBroker: Failed to parse the message content',
-                err,
-                { content: stringifiedContent }
-              );
+          await this.channel
+            .consume(
+              queue,
+              (msg) => {
+                if (!msg) {
+                  return;
+                }
 
-              this.channel?.nack(msg, false, false);
+                const stringifiedContent = msg.content.toString();
+                let content: Record<string, unknown> = {};
 
-              return;
-            }
+                try {
+                  content = JSON.parse(stringifiedContent);
+                } catch (err) {
+                  logger.logException(
+                    'RabbitMQMessageBroker: Failed to parse the message content',
+                    err,
+                    { content: stringifiedContent }
+                  );
 
-            cb(msg.properties.type, content, msg.properties)
-              .then(() => {
-                /**
-                 * NOTE:
-                 * `this.ch` can be null when something goes down while processing an event.
-                 * If a channel with not acknowledged message is closed
-                 * the event gets back to the queue.
-                 * Even if we establish a channel while processing the event
-                 * RabbitMQ won't accept the ack request
-                 *
-                 * See: https://www.rabbitmq.com/confirms.html
-                 * Acknowledgement must be sent on the same channel that received the delivery.
-                 * Attempts to acknowledge using a different channel will result in a channel-level
-                 * protocol exception. See the doc guide on confirmations to learn more.
-                 *
-                 * TODO: maybe try to handle it gracefully and handle duplicate
-                 * event processing in the listener
-                 *
-                 */
-                this.channel?.ack(msg);
-              })
-              .catch((err) => {
-                logger.logException(
-                  `RabbitMQMessageBroker: Registered consumer failed (${queue})`,
-                  err,
-                  { ...msg, content }
-                );
-                /***
-                 * Same situation we have above
-                 * TODO: maybe try handle gracefully
-                 *
-                 * NOTE: not acknowledged events go to a dead letter queue
-                 */
-                this.channel?.nack(msg, false, false);
-              });
-          },
-          { noAck: false }
-        );
+                  this.channel?.nack(msg, false, false);
+
+                  return;
+                }
+
+                consumer
+                  .callback(msg.properties.type, content, msg.properties)
+                  .then(() => {
+                    /**
+                     * NOTE:
+                     * `this.ch` can be null when something goes down while processing an event.
+                     * If a channel with not acknowledged message is closed
+                     * the event gets back to the queue.
+                     * Even if we establish a channel while processing the event
+                     * RabbitMQ won't accept the ack request
+                     *
+                     * See: https://www.rabbitmq.com/confirms.html
+                     * Acknowledgement must be sent on the same channel that received the delivery.
+                     * Attempts to acknowledge using a different channel will result in a channel-level
+                     * protocol exception. See the doc guide on confirmations to learn more.
+                     *
+                     * TODO: maybe try to handle it gracefully and handle duplicate
+                     * event processing in the listener
+                     *
+                     */
+                    this.channel?.ack(msg);
+                  })
+                  .catch((err) => {
+                    logger.logException(
+                      `RabbitMQMessageBroker: Registered consumer failed (${queue})`,
+                      err,
+                      { ...msg, content }
+                    );
+                    /***
+                     * Same situation we have above
+                     * TODO: maybe try handle gracefully
+                     *
+                     * NOTE: not acknowledged events go to a dead letter queue
+                     */
+                    this.channel?.nack(msg, false, false);
+                  });
+              },
+              { noAck: false }
+            )
+            .catch((err) => {
+              consumer.unregister(); // unregister the consumer to try again later
+
+              throw err; // rethrow the error to handle it in the outer catch block
+            });
+        }
       }
 
       logger.logInfo('RabbitMQMessageBroker: Consumers registered', {});
     } catch (err) {
       logger.logException(
-        'RabbitMQMessageBroker: Failed to register consumer',
+        'RabbitMQMessageBroker: Failed to register consumers',
         err
       );
+
+      throw err; // rethrow the error to handle it in the caller function
     }
   }
 
