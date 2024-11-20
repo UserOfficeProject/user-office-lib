@@ -53,3 +53,20 @@ export const generalInfoUpdateValidationSchema = Yup.object().shape({
     .max(MAX_ABSTRACT_LEN, 'Abstract must be at most 1500 characters')
     .required('Abstract is required'),
 });
+
+export const createProposalScientistCommentValidationSchema =
+  Yup.object().shape({
+    comment: Yup.string().min(1).required('Comment is required'),
+    proposalPk: Yup.number().required(),
+  });
+
+export const updateProposalScientistCommentValidationSchema =
+  Yup.object().shape({
+    commentId: Yup.number().required(),
+    comment: Yup.string().min(1).required('Comment is required'),
+  });
+
+export const deleteProposalScientistCommentValidationSchema =
+  Yup.object().shape({
+    commentId: Yup.number().required(),
+  });
