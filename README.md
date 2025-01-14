@@ -47,7 +47,7 @@ $ npm install <dependency> -w <package>
 > More details information on Lerna's page: https://github.com/lerna/lerna/tree/master/commands/add
 
 ## Publishing new version
-Before publishing a new version it's recommended to run `npm run lerna`:prePublish` to update package-lock.json with the new version number. \
+Before publishing a new version it's recommended to run `npm run lerna:prePublish` to update package-lock.json with the new version number. \
 By default in case of a new push to the `master` branch a Github action will be triggered, which will check if there are any updated packages - updated means it has a version number that does not exist in the NPM registry. If there are it will publish the new packages. \
 Every package should have a `build` command which compiles TS to JS using a proper tsconfig.
 
