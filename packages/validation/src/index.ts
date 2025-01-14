@@ -9,6 +9,7 @@ export * from './PredefinedMessage';
 export * from './Template';
 export * from './User';
 export * from './Instrument';
+export * from './Invite';
 export * from './ScheduledEvent';
 export * from './ProposalBooking';
 export * from './LostTime';
