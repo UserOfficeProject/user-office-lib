@@ -19,5 +19,3 @@ export const updateInviteValidationSchema = Yup.object().shape({
     coProposerProposalPk: Yup.number().optional(),
   }),
 });
-
-
