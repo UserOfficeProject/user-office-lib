@@ -1,50 +1,51 @@
 import * as Yup from 'yup';
 
-export const createProposalWorkflowValidationSchema = Yup.object().shape({
+export const createWorkflowValidationSchema = Yup.object().shape({
   name: Yup.string().max(50).required(),
   description: Yup.string().max(200).required(),
+  entityType: Yup.string().oneOf(['proposal', 'experiment']).required(),
 });
 
-export const updateProposalWorkflowValidationSchema = Yup.object().shape({
+export const updateWorkflowValidationSchema = Yup.object().shape({
   id: Yup.number().required(),
   name: Yup.string().max(50).required(),
   description: Yup.string().max(200).required(),
 });
 
-export const deleteProposalWorkflowValidationSchema = Yup.object().shape({
+export const deleteWorkflowValidationSchema = Yup.object().shape({
   id: Yup.number().required(),
 });
 
-export const addProposalWorkflowStatusValidationSchema = Yup.object().shape({
-  proposalWorkflowId: Yup.number().required(),
+export const addWorkflowStatusValidationSchema = Yup.object().shape({
+  workflowId: Yup.number().required(),
   sortOrder: Yup.number().required(),
   droppableGroupId: Yup.string().required(),
   parentDroppableGroupId: Yup.string().nullable().notRequired(),
-  proposalStatusId: Yup.number().required(),
-  nextProposalStatusId: Yup.number().nullable().notRequired(),
-  prevProposalStatusId: Yup.number().nullable().notRequired(),
+  statusId: Yup.number().required(),
+  nextStatusId: Yup.number().nullable().notRequired(),
+  prevStatusId: Yup.number().nullable().notRequired(),
 });
 
-export const moveProposalWorkflowStatusValidationSchema = Yup.object().shape({
+export const moveWorkflowStatusValidationSchema = Yup.object().shape({
   from: Yup.number().required(),
   to: Yup.number().required(),
-  proposalWorkflowId: Yup.number().required(),
+  workflowId: Yup.number().required(),
 });
 
-export const deleteProposalWorkflowStatusValidationSchema = Yup.object().shape({
-  proposalStatusId: Yup.number().required(),
-  proposalWorkflowId: Yup.number().required(),
+export const deleteWorkflowStatusValidationSchema = Yup.object().shape({
+  statusId: Yup.number().required(),
+  workflowId: Yup.number().required(),
 });
 
 export const addNextStatusEventsValidationSchema = Yup.object().shape({
-  proposalWorkflowConnectionId: Yup.number().required(),
+  workflowConnectionId: Yup.number().required(),
   nextStatusEvents: Yup.array().of(Yup.string()).required(),
 });
 
 export const addStatusActionsToConnectionValidationSchema = <T>(
   emailStatusActionType: T,
   rabbitMQStatusActionType: T,
-  proposalStatusActionTypes: T[]
+  statusActionTypes: T[]
 ) =>
   Yup.object().shape({
     connectionId: Yup.number().required(),
@@ -53,9 +54,7 @@ export const addStatusActionsToConnectionValidationSchema = <T>(
       .of(
         Yup.object().shape({
           actionId: Yup.number().required(),
-          actionType: Yup.mixed<T>()
-            .oneOf(proposalStatusActionTypes)
-            .required(),
+          actionType: Yup.mixed<T>().oneOf(statusActionTypes).required(),
           config: Yup.object().test(
             'RecipientWithTemplate',
             'Invalid values provided for action config',

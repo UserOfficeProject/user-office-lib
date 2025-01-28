@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-export const createProposalStatusValidationSchema = Yup.object()
+export const createStatusValidationSchema = Yup.object()
   .shape({
     shortCode: Yup.string()
       .max(50)
@@ -14,10 +14,11 @@ export const createProposalStatusValidationSchema = Yup.object()
       .required(),
     name: Yup.string().max(100).required(),
     description: Yup.string().max(200).required(),
+    entityType: Yup.string().oneOf(['proposal', 'experiment']).required(),
   })
   .strict(true);
 
-export const updateProposalStatusValidationSchema = Yup.object()
+export const updateStatusValidationSchema = Yup.object()
   .shape({
     id: Yup.number().required(),
     shortCode: Yup.string()
@@ -35,6 +36,6 @@ export const updateProposalStatusValidationSchema = Yup.object()
   })
   .strict(true);
 
-export const deleteProposalStatusValidationSchema = Yup.object().shape({
+export const deleteStatusValidationSchema = Yup.object().shape({
   id: Yup.number().required(),
 });
