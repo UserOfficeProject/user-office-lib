@@ -7,7 +7,7 @@ export const TZ_LESS_DATE_TIME_FORMAT = 'yyyy-MM-DD HH:mm:ss';
 export const TYPE_ERR_INVALID_DATE = 'Invalid Date Format';
 export const TYPE_ERR_INVALID_DATE_TIME = 'Invalid DateTime Format';
 
-export const SEP_REVIEW_COMMENT_CHAR_LIMIT = 2000;
+export const FAP_REVIEW_COMMENT_CHAR_LIMIT = 6000;
 
 export const minCharactersMsg = ({ min }: { min: number }) =>
   `Must be at least ${min} characters`;

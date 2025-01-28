@@ -2,6 +2,7 @@ jest.mock('amqplib');
 jest.mock('@user-office-software/duo-logger');
 
 import { RabbitMQMessageBroker, Queue } from './index';
+import { logger } from '@user-office-software/duo-logger';
 import amqp from 'amqplib';
 
 describe('RabbitMQMessageBroker', () => {
@@ -10,6 +11,7 @@ describe('RabbitMQMessageBroker', () => {
   let mockAmqpChannel: jest.Mocked<Partial<amqp.Channel>>;
   let mockAmqpConnection: jest.Mocked<Partial<amqp.Connection>>;
   let mockAmqpConnectionEventCallbacks: Map<string, Function> = new Map();
+  let spyLogException: jest.SpyInstance;
   const TEST_EXCHANGE = 'user_office_backend.fanout';
 
   beforeEach(() => {
@@ -32,22 +34,20 @@ describe('RabbitMQMessageBroker', () => {
 
     amqp.connect = jest.fn().mockResolvedValue(mockAmqpConnection);
 
-    broker = new RabbitMQMessageBroker();
+    spyLogException = jest.spyOn(logger, 'logException');
   });
 
   describe('registerConsumers', () => {
     let consumer: jest.Mock;
 
     beforeEach(async () => {
+      broker = new RabbitMQMessageBroker();
       consumer = jest.fn();
       await broker.setup();
     });
 
     it('should register a consumer when "listenOn" function is called', async () => {
-      broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer);
-
-      // waiting for registerConsumer function to finish behind the scenes
-      await sleep();
+      await broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer);
 
       expect(mockAmqpChannel.consume).toHaveBeenCalledWith(
         Queue.SCHEDULING_PROPOSAL,
@@ -56,12 +56,18 @@ describe('RabbitMQMessageBroker', () => {
       );
     });
 
+    it('should register multiple consumers when "listenOn" function is called multiple times', async () => {
+      await broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer);
+      await broker.listenOn(Queue.SCICAT_PROPOSAL, consumer);
+      await broker.listenOn(Queue.SCICAT_PROPOSAL, consumer);
+      await broker.listenOn(Queue.SCICHAT_PROPOSAL, consumer);
+
+      expect(mockAmqpChannel.consume).toHaveBeenCalledTimes(4);
+    });
+
     it('should re-register consumers during reconnection', async () => {
       // register consumer
-      broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer);
-
-      // waiting for registerConsumer function to finish behind the scenes
-      await sleep();
+      await broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer);
 
       // use fake timers to simulate 5sec timeout
       jest.useFakeTimers();
@@ -85,14 +91,64 @@ describe('RabbitMQMessageBroker', () => {
       expect(mockAmqpChannel.consume).toHaveBeenCalledTimes(2);
     });
 
-    it('should bind a queue to exchange when "addQueueToExchangeBinding" function is called', async () => {
-      broker.addQueueToExchangeBinding(
+    it('should handle errors when registering consumers', async () => {
+      mockAmqpChannel.consume = jest.fn().mockRejectedValue(new Error('test'));
+
+      try {
+        await broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer);
+      } catch (err) {
+        expect((err as Error).message).toBe('test');
+        expect(spyLogException).toHaveBeenCalledWith(
+          'RabbitMQMessageBroker: Failed to register consumers',
+          err
+        );
+      }
+
+      // it should be able to register the consumer after an error (unregister the consumer)
+      mockAmqpChannel.consume = jest.fn().mockResolvedValue({});
+      await broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer);
+      expect(mockAmqpChannel.consume).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('scheduleReconnect', () => {
+    beforeEach(async () => {
+      broker = new RabbitMQMessageBroker();
+      await broker.setup();
+    });
+
+    it('should re-register consumers', async () => {
+      // register consumer
+      await broker.listenOn(Queue.SCHEDULING_PROPOSAL, jest.fn());
+
+      // use fake timers to simulate 5sec timeout
+      jest.useFakeTimers();
+
+      // simulate connection close event
+      mockAmqpConnectionEventCallbacks.get('close')!();
+
+      // waiting for scheduleReconnect calls setup again
+      jest.runAllTimers();
+      jest.useRealTimers();
+
+      // waiting for setup function to finish behind the scenes
+      await sleep();
+
+      expect(mockAmqpChannel.consume).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('addQueueToExchangeBinding', () => {
+    beforeEach(async () => {
+      broker = new RabbitMQMessageBroker();
+      await broker.setup();
+    });
+
+    it('should bind a queue to exchange when the function is called', async () => {
+      await broker.addQueueToExchangeBinding(
         Queue.SCHEDULING_PROPOSAL,
         TEST_EXCHANGE
       );
-
-      // waiting for addQueueToExchangeBinding function to finish behind the scenes
-      await sleep();
 
       expect(mockAmqpChannel.bindQueue).toHaveBeenCalledWith(
         Queue.SCHEDULING_PROPOSAL,
@@ -103,13 +159,10 @@ describe('RabbitMQMessageBroker', () => {
 
     it('should re-bind queues to exchanges during reconnection', async () => {
       // add queue to exchange binding
-      broker.addQueueToExchangeBinding(
+      await broker.addQueueToExchangeBinding(
         Queue.SCHEDULING_PROPOSAL,
         TEST_EXCHANGE
       );
-
-      // waiting for registerConsumer function to finish behind the scenes
-      await sleep();
 
       // use fake timers to simulate 5sec timeout
       jest.useFakeTimers();
@@ -130,7 +183,7 @@ describe('RabbitMQMessageBroker', () => {
         ''
       );
 
-      // it should be called 4 times because assertQueue also calls bindQueue for binding deadLetterQueue to deadLetterExchange 
+      // it should be called 4 times because assertQueue also calls bindQueue for binding deadLetterQueue to deadLetterExchange
       expect(mockAmqpChannel.bindQueue).toHaveBeenCalledTimes(4);
     });
   });

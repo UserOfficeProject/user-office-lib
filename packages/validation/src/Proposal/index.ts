@@ -24,17 +24,21 @@ export const proposalNotifyValidationSchema = submitProposalValidationSchema;
 
 export const administrationProposalValidationSchema = Yup.object().shape({
   proposalPk: Yup.number().required(),
-  statusId: Yup.number().nullable(),
-  finalStatus: Yup.string().nullable(),
+  finalStatus: Yup.string().required(),
   commentForUser: Yup.string().nullable(),
   commentForManagement: Yup.string().nullable(),
-  rankOrder: Yup.number()
-    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
-    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
-  managementTimeAllocation: Yup.number()
-    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
-    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
-    .nullable(),
+  managementTimeAllocations: Yup.array()
+    .of(
+      Yup.object().shape({
+        instrumentId: Yup.number().required(),
+        value: Yup.number()
+          .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
+          .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
+          .nullable(),
+      })
+    )
+    .required()
+    .min(1),
   managementDecisionSubmitted: Yup.bool().nullable(),
 });
 
@@ -49,3 +53,20 @@ export const generalInfoUpdateValidationSchema = Yup.object().shape({
     .max(MAX_ABSTRACT_LEN, 'Abstract must be at most 1500 characters')
     .required('Abstract is required'),
 });
+
+export const createProposalScientistCommentValidationSchema =
+  Yup.object().shape({
+    comment: Yup.string().min(1).required('Comment is required'),
+    proposalPk: Yup.number().required(),
+  });
+
+export const updateProposalScientistCommentValidationSchema =
+  Yup.object().shape({
+    commentId: Yup.number().required(),
+    comment: Yup.string().min(1).required('Comment is required'),
+  });
+
+export const deleteProposalScientistCommentValidationSchema =
+  Yup.object().shape({
+    commentId: Yup.number().required(),
+  });

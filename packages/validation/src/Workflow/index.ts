@@ -42,10 +42,11 @@ export const addNextStatusEventsValidationSchema = Yup.object().shape({
   nextStatusEvents: Yup.array().of(Yup.string()).required(),
 });
 
-export const addStatusActionsToConnectionValidationSchema = <T>(
+export const addStatusActionsToConnectionValidationSchema = <T, U>(
   emailStatusActionType: T,
   rabbitMQStatusActionType: T,
-  statusActionTypes: T[]
+  statusActionTypes: T[],
+  otherEmailActionRecipients: U
 ) =>
   Yup.object().shape({
     connectionId: Yup.number().required(),
@@ -58,7 +59,7 @@ export const addStatusActionsToConnectionValidationSchema = <T>(
           config: Yup.object().test(
             'RecipientWithTemplate',
             'Invalid values provided for action config',
-            (value: any, context: any) => {
+            async (value: any, context: any) => {
               switch (context.parent.actionType) {
                 case emailStatusActionType: {
                   // NOTE: Value here is: EmailActionConfig from the core codebase
@@ -71,6 +72,26 @@ export const addStatusActionsToConnectionValidationSchema = <T>(
 
                     if (filteredNonCompleteValues.length) {
                       return false;
+                    }
+
+                    const foundOtherRecipient =
+                      value.recipientsWithEmailTemplate.find(
+                        (recipientWithEmailTemplate: any) =>
+                          recipientWithEmailTemplate.recipient.name ===
+                          otherEmailActionRecipients
+                      );
+
+                    // NOTE: Check if 'OTHER' is selected as recipient and valid emails are provided as input.
+                    if (foundOtherRecipient) {
+                      await Yup.array()
+                        .of(
+                          Yup.string().email(
+                            ({ value }) => `${value} is not a valid email`
+                          )
+                        )
+                        .min(1, 'You must provide at least 1 valid email')
+                        .required()
+                        .validate(foundOtherRecipient.otherRecipientEmails);
                     }
 
                     return true;

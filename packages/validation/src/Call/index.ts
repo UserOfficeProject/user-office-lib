@@ -66,31 +66,31 @@ const secondStepCallValidationSchema = Yup.object().shape({
         'End review date can not be before start review date.'
       );
     }),
-  startSEPReview: Yup.date()
+  startFapReview: Yup.date()
     .typeError(TYPE_ERR_INVALID_DATE)
     .nullable()
     .notRequired(),
-  endSEPReview: Yup.date()
+  endFapReview: Yup.date()
     .typeError(TYPE_ERR_INVALID_DATE)
     .nullable()
     .notRequired()
     .when(
-      'startSEPReview',
+      'startFapReview',
       (
-        startSEPReview: Date,
+        startFapReview: Date,
         schema: Yup.DateSchema<
           Date | null | undefined,
           Record<string, unknown>,
           Date | null | undefined
         >
       ) => {
-        if (!isValidDate(startSEPReview)) {
+        if (!isValidDate(startFapReview)) {
           return schema;
         }
 
         return schema.min(
-          startSEPReview,
-          'End SEP review date can not be before start SEP review date.'
+          startFapReview,
+          'End Fap review date can not be before start Fap review date.'
         );
       }
     ),
@@ -149,6 +149,32 @@ export const updateCallValidationSchemas = [
   thirdStepCallValidationSchema,
 ];
 
+export const updateCallValidationBackendSchema = Yup.object().shape({
+  // from first step
+  id: firstStepUpdateCallValidationSchema.fields.id,
+  shortCode: firstStepCreateCallValidationSchema.fields.shortCode.optional(),
+  startCall: firstStepCreateCallValidationSchema.fields.startCall.optional(),
+  endCall: firstStepCreateCallValidationSchema.fields.endCall.optional(),
+  endCallInternal:
+    firstStepCreateCallValidationSchema.fields.endCallInternal.optional(),
+  templateId: firstStepCreateCallValidationSchema.fields.templateId.optional(),
+  proposalWorkflowId:
+    firstStepCreateCallValidationSchema.fields.proposalWorkflowId.optional(),
+  // from second step
+  startReview: secondStepCallValidationSchema.fields.startReview.optional(),
+  endReview: secondStepCallValidationSchema.fields.endReview.optional(),
+  startFapReview:
+    secondStepCallValidationSchema.fields.startFapReview.optional(),
+  endFapReview: secondStepCallValidationSchema.fields.endFapReview.optional(),
+  surveyComment: secondStepCallValidationSchema.fields.surveyComment.optional(),
+  // from third step
+  startNotify: thirdStepCallValidationSchema.fields.startNotify.optional(),
+  endNotify: thirdStepCallValidationSchema.fields.endNotify.optional(),
+  startCycle: thirdStepCallValidationSchema.fields.startCycle.optional(),
+  endCycle: thirdStepCallValidationSchema.fields.endCycle.optional(),
+  cycleComment: thirdStepCallValidationSchema.fields.cycleComment.optional(),
+});
+
 export const assignInstrumentsToCallValidationSchema = Yup.object().shape({
   callId: Yup.number().required('callId is required'),
   instrumentIds: Yup.array(Yup.number())
@@ -162,8 +188,8 @@ export const removeAssignedInstrumentFromCallValidationSchema =
     instrumentId: Yup.number().required('instrumentId is required'),
   });
 
-export const updateSepToCallInstrumentValidationSchema = Yup.object().shape({
+export const updateFapToCallInstrumentValidationSchema = Yup.object().shape({
   callId: Yup.number().required('callId is required'),
   instrumentId: Yup.number().required('instrumentId is required'),
-  sepId: Yup.number(),
+  fapId: Yup.number(),
 });
