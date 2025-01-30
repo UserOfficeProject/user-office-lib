@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 export const createWorkflowValidationSchema = Yup.object().shape({
   name: Yup.string().max(50).required(),
   description: Yup.string().max(200).required(),
-  entityType: Yup.string().oneOf(['proposal', 'experiment']).required(),
+  entityType: Yup.string().oneOf(['PROPOSAL', 'EXPERIMENT']).required(),
 });
 
 export const updateWorkflowValidationSchema = Yup.object().shape({
