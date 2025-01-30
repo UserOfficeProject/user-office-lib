@@ -14,7 +14,7 @@ export const createStatusValidationSchema = Yup.object()
       .required(),
     name: Yup.string().max(100).required(),
     description: Yup.string().max(200).required(),
-    entityType: Yup.string().oneOf(['proposal', 'experiment']).required(),
+    entityType: Yup.string().oneOf(['PROPOSAL', 'EXPERIMENT']).required(),
   })
   .strict(true);
 
