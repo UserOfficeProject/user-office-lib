@@ -4,6 +4,12 @@ import { LEVEL } from '../../enum/Level';
 import { Logger } from '../Logger';
 
 export class ConsoleLogger implements Logger {
+  private readonly colorize: boolean;
+
+  constructor(config: { colorize: boolean } = { colorize: false }) {
+    this.colorize = config.colorize;
+  }
+
   logInfo(message: string, context: Record<string, unknown>) {
     this.log(LEVEL.INFO, message, context);
   }
@@ -47,23 +53,27 @@ export class ConsoleLogger implements Logger {
   }
 
   log(level: LEVEL, message: string, context: Record<string, unknown>) {
+    // Color definitions
     const colorReset = '\x1b[0m';
     const colorRed = '\x1b[31m';
     const colorYellow = '\x1b[33m';
     const colorBold = '\x1b[1m';
 
     let formattedLevel: string = level;
-    switch (level) {
-      case LEVEL.INFO:
-        formattedLevel = `${colorBold}${level}${colorReset}`;
-        break;
-      case LEVEL.ERROR:
-        formattedLevel = `${colorRed}${level}${colorReset}`;
-        break;
-      case LEVEL.WARN:
-        formattedLevel = `${colorYellow}${level}${colorReset}`;
-        break;
+    if (this.colorize) {
+      switch (level) {
+        case LEVEL.INFO:
+          formattedLevel = `${colorBold}${level}${colorReset}`;
+          break;
+        case LEVEL.ERROR:
+          formattedLevel = `${colorRed}${level}${colorReset}`;
+          break;
+        case LEVEL.WARN:
+          formattedLevel = `${colorYellow}${level}${colorReset}`;
+          break;
+      }
     }
+    // If not colorized, use plain level text
 
     console.log(
       `[${new Date().toISOString()}] ${formattedLevel} - ${message} \n ${safeStringify(
