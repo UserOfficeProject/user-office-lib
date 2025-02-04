@@ -47,8 +47,26 @@ export class ConsoleLogger implements Logger {
   }
 
   log(level: LEVEL, message: string, context: Record<string, unknown>) {
+    const colorReset = '\x1b[0m';
+    const colorRed = '\x1b[31m';
+    const colorYellow = '\x1b[33m';
+    const colorBold = '\x1b[1m';
+
+    let formattedLevel: string = level;
+    switch (level) {
+      case LEVEL.INFO:
+        formattedLevel = `${colorBold}${level}${colorReset}`;
+        break;
+      case LEVEL.ERROR:
+        formattedLevel = `${colorRed}${level}${colorReset}`;
+        break;
+      case LEVEL.WARN:
+        formattedLevel = `${colorYellow}${level}${colorReset}`;
+        break;
+    }
+
     console.log(
-      `[${new Date().toISOString()}] ${level} - ${message} \n ${safeStringify(
+      `[${new Date().toISOString()}] ${formattedLevel} - ${message} \n ${safeStringify(
         context
       )}`
     );
