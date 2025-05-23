@@ -45,6 +45,7 @@ export const addNextStatusEventsValidationSchema = Yup.object().shape({
 export const addStatusActionsToConnectionValidationSchema = <T, U>(
   emailStatusActionType: T,
   rabbitMQStatusActionType: T,
+  proposalDownloadStatusActionType: T,
   statusActionTypes: T[],
   otherEmailActionRecipients: U
 ) =>
@@ -106,6 +107,10 @@ export const addStatusActionsToConnectionValidationSchema = <T, U>(
                   } else {
                     return false;
                   }
+                }
+                case proposalDownloadStatusActionType: {
+                  // Proposal download action has no config
+                  return value === null || value === undefined;
                 }
                 default:
                   return false;
