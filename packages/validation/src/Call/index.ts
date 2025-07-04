@@ -38,6 +38,9 @@ const firstStepCreateCallValidationSchema = Yup.object().shape({
     }),
   templateId: Yup.number().required(),
   proposalWorkflowId: Yup.number().required(),
+  experimentWorkflowId: Yup.number().nullable().notRequired(),
+  proposalPdfTemplateId: Yup.number().nullable().notRequired(),
+  experimentPdfTemplateId: Yup.number().nullable().notRequired(),
 });
 
 const firstStepUpdateCallValidationSchema =
@@ -160,6 +163,12 @@ export const updateCallValidationBackendSchema = Yup.object().shape({
   templateId: firstStepCreateCallValidationSchema.fields.templateId.optional(),
   proposalWorkflowId:
     firstStepCreateCallValidationSchema.fields.proposalWorkflowId.optional(),
+  experimentWorkflowId:
+    firstStepCreateCallValidationSchema.fields.experimentWorkflowId.optional(),
+  proposalPdfTemplateId:
+    firstStepCreateCallValidationSchema.fields.proposalPdfTemplateId.optional(),
+  experimentPdfTemplateId:
+    firstStepCreateCallValidationSchema.fields.experimentPdfTemplateId.optional(),
   // from second step
   startReview: secondStepCallValidationSchema.fields.startReview.optional(),
   endReview: secondStepCallValidationSchema.fields.endReview.optional(),
