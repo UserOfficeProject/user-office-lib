@@ -1,5 +1,6 @@
 export * from './Admin';
 export * from './Call';
+export * from './DataAccessUser';
 export * from './Proposal';
 export * from './Statuses';
 export * from './Workflow';
