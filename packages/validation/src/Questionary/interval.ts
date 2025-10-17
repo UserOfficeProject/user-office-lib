@@ -1,6 +1,9 @@
 import * as Yup from 'yup';
 
-export const intervalQuestionValidationSchema = (field: any) => {
+export const intervalQuestionValidationSchema = (
+  field: any,
+  NumberValueConstraint: any
+) => {
   const config = field.config;
 
   let minSchema = Yup.number().transform((value) =>
@@ -13,6 +16,36 @@ export const intervalQuestionValidationSchema = (field: any) => {
   if (config.required) {
     minSchema = minSchema.required('This is a required field');
     maxSchema = maxSchema.required('This is a required field');
+  }
+
+  switch (config.numberValueConstraint) {
+    case NumberValueConstraint.ONLY_NEGATIVE:
+      minSchema = minSchema.negative('Value must be a negative number');
+      maxSchema = maxSchema.negative('Value must be a negative number');
+      break;
+
+    case NumberValueConstraint.ONLY_POSITIVE:
+      minSchema = minSchema.positive('Value must be a positive number');
+      maxSchema = maxSchema.positive('Value must be a positive number');
+      break;
+
+    case NumberValueConstraint.ONLY_NEGATIVE_INTEGER:
+      minSchema = minSchema
+        .integer('Value must be negative whole number')
+        .negative('Value must be negative whole number');
+      maxSchema = maxSchema
+        .integer('Value must be negative whole number')
+        .negative('Value must be negative whole number');
+      break;
+
+    case NumberValueConstraint.ONLY_POSITIVE_INTEGER:
+      minSchema = minSchema
+        .integer('Value must be positive whole number')
+        .positive('Value must be a positive whole number');
+      maxSchema = maxSchema
+        .integer('Value must be positive whole number')
+        .positive('Value must be a positive whole number');
+      break;
   }
 
   let unitSchema = Yup.object().nullable();
