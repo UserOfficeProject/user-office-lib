@@ -302,7 +302,11 @@ export class RabbitMQMessageBroker implements MessageBroker {
 
   private scheduleReconnect() {
     logger.logInfo(
-      'RabbitMQMessageBroker: Trying to reconnecting after 5 sec',
+      `RabbitMQMessageBroker: Trying to reconnecting after 5 sec there are:
+        ${this.messageBuffer.length} messages in the message buffer 
+        ${this.exchangeBuffer.length} messages in the exchange buffer
+        ${this.broadcastBuffer.length} messages in the broadcast buffer
+      `,
       {}
     );
 
