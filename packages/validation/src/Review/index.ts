@@ -22,8 +22,7 @@ const proposalFapReviewCommentValidationSchema = () => {
 
 export const proposalGradeValidationSchema = Yup.object().shape({
   comment: proposalFapReviewCommentValidationSchema(),
-  grade: Yup.string()
-    .required(),
+  grade: Yup.string().required(),
 });
 
 export const proposalTechnicalReviewValidationSchema = Yup.object().shape({

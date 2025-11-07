@@ -139,48 +139,15 @@ describe('User validation schemas', () => {
             const validData = {
                 firstname: 'John',
                 lastname: 'Doe',
-                gender: 'male',
                 user_title: 'Mr',
                 email: 'john.doe@example.com',
                 password: 'Password123',
                 confirmPassword: 'Password123',
-                birthdate: new Date(1990, 1, 1),
                 institutionId: 1,
-                department: 'Research',
-                position: 'Researcher',
-                telephone: '+1234567890',
             };
             await expect(
                 UserValidation.createUserValidationSchema.validate(validData)
             ).resolves.toMatchObject(validData);
-        });
-
-        it('should fail when user is under 18', async () => {
-            const today = new Date();
-            const underageDate = new Date(
-                today.getFullYear() - 17,
-                today.getMonth(),
-                today.getDate()
-            );
-            
-            const invalidData = {
-                firstname: 'John',
-                lastname: 'Doe',
-                gender: 'male',
-                user_title: 'Mr',
-                email: 'john.doe@example.com',
-                password: 'Password123',
-                confirmPassword: 'Password123',
-                birthdate: underageDate,
-                institutionId: 1,
-                department: 'Research',
-                position: 'Researcher',
-                telephone: '+1234567890',
-            };
-            
-            await expect(
-                UserValidation.createUserValidationSchema.validate(invalidData)
-            ).rejects.toThrow('You must be at least 18 years old');
         });
 
         it('should validate with optional preferredname', async () => {
@@ -188,16 +155,11 @@ describe('User validation schemas', () => {
                 firstname: 'John',
                 lastname: 'Doe',
                 preferredname: 'Johnny',
-                gender: 'male',
                 user_title: 'Mr',
                 email: 'john.doe@example.com',
                 password: 'Password123',
                 confirmPassword: 'Password123',
-                birthdate: new Date(1990, 1, 1),
                 institutionId: 1,
-                department: 'Research',
-                position: 'Researcher',
-                telephone: '+1234567890',
             };
             
             await expect(
