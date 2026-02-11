@@ -6,6 +6,9 @@ name: Publish packages
 on:
   push:
     branches: [master]
+  pull_request:
+    branches: [master]
+    types: [opened, reopened, synchronize]
 
 env:
   NODE_VERSION: 18.x
