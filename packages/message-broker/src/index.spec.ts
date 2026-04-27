@@ -21,6 +21,7 @@ describe('RabbitMQMessageBroker', () => {
       bindQueue: jest.fn(),
       publish: jest.fn(),
       consume: jest.fn().mockResolvedValue({}),
+      prefetch: jest.fn(),
       on: jest.fn(),
     };
 
@@ -108,6 +109,25 @@ describe('RabbitMQMessageBroker', () => {
       mockAmqpChannel.consume = jest.fn().mockResolvedValue({});
       await broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer);
       expect(mockAmqpChannel.consume).toHaveBeenCalledTimes(2);
+    });
+
+    it('should call channel.prefetch with the given value before consume when prefetch option is set', async () => {
+      await broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer, {
+        prefetch: 10,
+      });
+
+      expect(mockAmqpChannel.prefetch).toHaveBeenCalledWith(10, false);
+      const prefetchOrder = (mockAmqpChannel.prefetch as jest.Mock).mock
+        .invocationCallOrder[0];
+      const consumeOrder = (mockAmqpChannel.consume as jest.Mock).mock
+        .invocationCallOrder[0];
+      expect(prefetchOrder).toBeLessThan(consumeOrder);
+    });
+
+    it('should not call channel.prefetch when prefetch option is not set', async () => {
+      await broker.listenOn(Queue.SCHEDULING_PROPOSAL, consumer);
+
+      expect(mockAmqpChannel.prefetch).not.toHaveBeenCalled();
     });
   });
 
