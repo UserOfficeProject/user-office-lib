@@ -24,6 +24,10 @@ export type ConsumerCallback = (
   properties: MessageProperties
 ) => Promise<void>;
 
+export type ListenOnOptions = {
+  prefetch?: number;
+};
+
 export interface MessageBroker {
   sendMessage(queue: Queue, type: string, message: string): Promise<void>;
   sendBroadcast(queue: Queue, type: string, message: string): Promise<void>;
@@ -36,7 +40,11 @@ export interface MessageBroker {
     queueName: string,
     exchangeName: string
   ): Promise<void>;
-  listenOn(queue: Queue, cb: ConsumerCallback): Promise<void>;
+  listenOn(
+    queue: Queue,
+    cb: ConsumerCallback,
+    options?: ListenOnOptions
+  ): Promise<void>;
   listenOnBroadcast(cb: ConsumerCallback): void;
 }
 
@@ -110,12 +118,16 @@ export class RabbitMQMessageBroker implements MessageBroker {
     }
   }
 
-  async listenOn(queue: Queue, cb: ConsumerCallback) {
+  async listenOn(
+    queue: Queue,
+    cb: ConsumerCallback,
+    options: ListenOnOptions = {}
+  ) {
     if (!this.queueConsumers.has(queue)) {
       this.queueConsumers.set(queue, []);
     }
 
-    this.queueConsumers.get(queue)?.push(new Consumer(cb));
+    this.queueConsumers.get(queue)?.push(new Consumer(cb, options));
 
     if (this.channel) {
       await this.registerConsumers();
@@ -383,6 +395,10 @@ export class RabbitMQMessageBroker implements MessageBroker {
             // mark consumer as registered at the start of the loop to prevent multiple registrations.
             // this is necessary because it is called multiple times in parallel without waiting for the result.
             consumer.register();
+          }
+
+          if (consumer.options.prefetch !== undefined) {
+            await this.channel.prefetch(consumer.options.prefetch, false);
           }
 
           await this.channel
