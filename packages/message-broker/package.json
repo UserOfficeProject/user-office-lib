@@ -1,6 +1,6 @@
 {
   "name": "@user-office-software/duo-message-broker",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "",
   "author": "SWAP",
   "license": "ISC",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@types/amqplib": "^0.10.1",
     "@user-office-software/duo-logger": "^2.1.1",
-    "amqplib": "^0.10.3"
+    "amqplib": "^0.10.9"
   },
   "engines": {
     "npm": ">=8.5.0",
