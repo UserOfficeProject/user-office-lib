@@ -7,6 +7,8 @@ on:
   push:
     branches: [master]
 
+  workflow_dispatch:
+
 env:
   NODE_VERSION: 18.x
 
@@ -21,6 +23,9 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm run lerna:build
-      - run: npm run lerna:publish
+      - name: Check npm auth
+        run: |
+         npm whoami
+         npm config get registry
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
