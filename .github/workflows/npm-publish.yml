@@ -5,7 +5,9 @@ name: Publish packages
 
 on:
   push:
-    branches: [master]
+    branches: 
+     - master
+     - debug-npm-auth
 
   workflow_dispatch:
 
