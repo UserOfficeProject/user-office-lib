@@ -17,6 +17,8 @@ env:
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{secrets.npm_token}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,5 +31,4 @@ jobs:
         run: |
          npm whoami
          npm config get registry
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        
