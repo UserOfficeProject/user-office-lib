@@ -18,7 +18,7 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     env:
-      NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,6 +29,6 @@ jobs:
       - run: npm run lerna:build
       - name: Check npm auth
         run: |
-         npm whoami
-         npm config get registry
+          npm whoami
+          npm config get registry
         
