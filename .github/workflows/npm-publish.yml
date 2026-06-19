@@ -6,7 +6,6 @@ name: Publish packages
 on:
   push:
     branches:
-      - master
       - debug-npm-auth
 
 permissions:
