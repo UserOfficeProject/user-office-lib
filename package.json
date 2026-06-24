@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "tsc --noEmit && eslint ./packages --ext .js,.ts --quiet",
     "lint:fix": "tsc --noEmit && eslint ./packages --ext .js,.ts --quiet --fix",
-    "lerna:build": "lerna run build --ignore=@user-office-software/uows_client_generator",
+    "lerna:build": "lerna run build",
     "lerna:clean": "lerna clean --yes",
     "lerna:publish": "lerna publish from-package --yes --no-verify-access",
     "lerna:test": "lerna run test",
