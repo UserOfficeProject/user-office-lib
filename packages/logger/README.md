@@ -37,6 +37,28 @@ setLogger(
 );
 ```
 
+Example for forwarding only some log levels
+```typescript
+import {
+  ConsoleLogger,
+  GrayLogLogger,
+  LEVEL,
+  LevelFilterLogger,
+  setLogger,
+} from '@user-office-software/duo-logger';
+
+// log everything to console, but send only WARN and above to Graylog
+setLogger([
+  new ConsoleLogger(),
+  new LevelFilterLogger(
+    new GrayLogLogger('my-graylog-server.com', 12201, {}, []),
+    LEVEL.WARN
+  ),
+]);
+```
+
+Severity order is `DEBUG < INFO < WARN < ERROR < EXCEPTION < FATAL`.
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
